@@ -28,14 +28,15 @@ var finishDiv = container.select("#finish_label");
 svg.attr("width", width + "px");
 svg.attr("height", height + "px");
 
-d3.json("static/data/testdata.json", function(data) {
-    drawPath(data);
-});
+var isEvenClick = true;
+var node1;
+var node2;
 
 d3.xml("static/data/testdata.xml", function(data) {
     data = [].map.call(data.querySelectorAll("node"), function(node) {
         var coords = node.querySelector("attvalues").querySelectorAll("attvalue");
         return {
+            id: node.getAttribute("id"),
             name: node.getAttribute("id") + " id, " + coords[0].getAttribute("value") + " name",
             coords: {x: coords[1].getAttribute("value"), y: coords[2].getAttribute("value")}
         };
@@ -54,11 +55,17 @@ d3.xml("static/data/testdata.xml", function(data) {
             var currentDist = Math.sqrt(nodeX*nodeX + nodeY*nodeY);
             if (currentDist < distance) {
                 distance = currentDist;
-                node = d.name
+                node = d
             }
         });
-        console.log(node);
-        //console.log(d3.event.offsetX, d3.event.offsetY)
+        console.log(node.name);
+        isEvenClick = !isEvenClick;
+        if (!isEvenClick) {
+            node1 = node.id;
+        } else {
+            node2 = node.id;
+            getData(node1,node2);
+        }
 
     });
 });
@@ -74,9 +81,8 @@ function completePath(data) {
     path.attr("d", line(points));
     path.attr("opacity", 0)
         .transition()
-        .duration(2000)
+        .duration(1000)
         .attr("opacity", 1);
-    console.log(points);
 
     var startPoint = points[0];
     var finishPoint = points[points.length - 1];
@@ -93,37 +99,57 @@ function completePath(data) {
             top: (yScale(finishPoint.y) - 15) + "px"
         });
 
-    if (navigator.geolocation) {
-        console.log('Geolocation is supported!');
-    }
-    else {
-        console.log('Geolocation is not supported for this Browser/OS version yet.');
-    }
-
-    var startPos;
-    var geoOptions = {
-        enableHighAccuracy: true
-    };
-    var defLat = 59.9806333;
-    var defLon = 30.325898700000003;
-
-
-    var geoSuccess = function(position) {
-        startPos = position;
-        document.getElementById('startLat').innerHTML = startPos.coords.latitude// - defLat;
-        document.getElementById('startLon').innerHTML = startPos.coords.longitude// - defLon;
-    };
-    navigator.geolocation.getCurrentPosition(geoSuccess);
-
 }
 
+var group504 = container.select("#group_504");
 function drawPath(data) {
-    completePath(data)
+    completePath(data);
+    moveTable(path, group504);
 }
-console
 
 
+function moveTable(path, group){
+    var totalLength = path.node().getTotalLength();
+    console.log(totalLength);
+    d3.transition()
+        .duration(totalLength * 100)
+        .tween("rotate", function() {
+            return function(t) {
+                var coords = path.node().getPointAtLength(t * totalLength);
+                group.style({
+                    top: coords.y + "px",
+                    left: coords.x + "px"
+                });
+            }
+        })
+        .transition()
+        .each("end", function(){
+            console.log("end")
+        })
+}
 
+
+if (navigator.geolocation) {
+    console.log('Geolocation is supported!');
+}
+else {
+    console.log('Geolocation is not supported for this Browser/OS version yet.');
+}
+
+var startPos;
+var geoOptions = {
+    enableHighAccuracy: true
+};
+var defLat = 59.9806333;
+var defLon = 30.325898700000003;
+
+
+var geoSuccess = function(position) {
+    startPos = position;
+    document.getElementById('startLat').innerHTML = startPos.coords.latitude// - defLat;
+    document.getElementById('startLon').innerHTML = startPos.coords.longitude// - defLon;
+};
+navigator.geolocation.getCurrentPosition(geoSuccess);
 
 //console.log(Date.now())
 

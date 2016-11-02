@@ -15,7 +15,10 @@ svg, img, #start_label, #finish_label {
     position: absolute;
 }
 
-.label {
+.group_label {
+    position: absolute;
+}
+.label, .group_label {
     background: rgba(155,80,0,0.7);
     padding: 2px;
     border-radius: 5px;

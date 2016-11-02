@@ -10,7 +10,7 @@
 <input id="from" type="text"/>
 <input id="to" type="text"/>
 
-<button onclick="getData()" id="button">Send request</button>
+<button onclick="updateNodes()" id="button">Send request</button>
 
 <div id="startLat"></div>
 <div id="startLon"></div>
@@ -21,20 +21,22 @@
   </svg>
   <div id="start_label" class="label">text1</div>
   <div id="finish_label" class="label">text2</div>
+  <div id="group_504" class="group_label">504!</div>
 </div>
 <script>
-  function getData() {
-    var node1 = document.getElementById("from").value;
-    var node2 = document.getElementById("to").value;
+  function updateNodes() {
+  var node1 = document.getElementById("from").value;
+  var node2 = document.getElementById("to").value;
+    getData(node1, node2);
+  }
+  function getData(node1, node2) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
 
     xhr.send();
     xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) return;
-      console.log(xhr.responseText)
       drawPath(JSON.parse(xhr.responseText));
-      //return xhr.responseText;
     }
   }
 </script>
