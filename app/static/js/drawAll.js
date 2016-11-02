@@ -105,7 +105,7 @@ function completePath(data) {
     var startPos;
     var geoOptions = {
         enableHighAccuracy: true
-    }
+    };
     var defLat = 59.9806333;
     var defLon = 30.325898700000003;
 

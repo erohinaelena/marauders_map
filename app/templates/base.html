@@ -32,6 +32,7 @@
     xhr.send();
     xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) return;
+      console.log(xhr.responseText)
       drawPath(JSON.parse(xhr.responseText));
       //return xhr.responseText;
     }
