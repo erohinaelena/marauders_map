@@ -35,15 +35,12 @@ d3.json("static/data/testdata.json", function(data) {
 d3.xml("static/data/testdata.xml", function(data) {
     data = [].map.call(data.querySelectorAll("node"), function(node) {
         var coords = node.querySelector("attvalues").querySelectorAll("attvalue");
-        //var x = coords[0]
-        //console.log(coords[1].getAttribute("value"));
         return {
-            name: node.getAttribute("id"),
-            coords: {x: coords[1].getAttribute("value"), y: coords[1].getAttribute("value")}
+            name: node.getAttribute("id") + " id, " + coords[0].getAttribute("value") + " name",
+            coords: {x: coords[1].getAttribute("value"), y: coords[2].getAttribute("value")}
         };
 
     });
-    //console.log(data);
     svg.on("click", function() {
         var x = xScale.invert(d3.event.offsetX);
         var y = xScale.invert(d3.event.offsetY);
@@ -67,6 +64,7 @@ d3.xml("static/data/testdata.xml", function(data) {
 });
 
 function completePath(data) {
+    if (!data) return;
     var line = d3.svg.line()
         .x(function(d) { return xScale(d.x)})
         .y(function(d) { return yScale(d.y)});
@@ -81,18 +79,18 @@ function completePath(data) {
     console.log(points);
 
     var startPoint = points[0];
-    var finishPoint = points[points.length-1];
+    var finishPoint = points[points.length - 1];
     startDiv
         .text(startPoint.no_room)
         .style({
-            left: (xScale(startPoint.x)-5)+ "px",
-            top: (yScale(startPoint.y)-15) + "px"
+            left: (xScale(startPoint.x) - 5)+ "px",
+            top: (yScale(startPoint.y) - 15) + "px"
         });
     finishDiv
         .text(finishPoint.no_room)
         .style({
-            left: (xScale(finishPoint.x)-10) + "px",
-            top: (yScale(finishPoint.y)-15) + "px"
+            left: (xScale(finishPoint.x) - 10) + "px",
+            top: (yScale(finishPoint.y) - 15) + "px"
         });
 
     if (navigator.geolocation) {
@@ -120,9 +118,10 @@ function completePath(data) {
 }
 
 function drawPath(data) {
-    console.log(data);
     completePath(data)
 }
+console
+
 
 
 
