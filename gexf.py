@@ -16,4 +16,4 @@ def get_path_json(G, node1, node2):
 G = nx.read_gexf(location)
 #print json.dumps(nx.shortest_path(G, '1', '2'))
 
-print get_path_json(G, '3', '0')
+print get_path_json(G, '105', '0')

@@ -1,0 +1,46 @@
+@font-face {
+    font-family: Itim-Regular; /* Гарнитура шрифта */
+    src: local(Itim-Regular), url(../fonts/Itim-Regular.ttf); /* Для остальных браузеров */
+}
+
+#map {
+    position: relative;
+    left: 50px;
+    top: 30px;
+    font-family: 'Itim-Regular', Fantasy;
+    font-weight: 600;
+}
+
+svg, img, #start_label, #finish_label {
+    position: absolute;
+}
+
+.label {
+    background: rgba(155,80,0,0.7);
+    padding: 2px;
+    border-radius: 5px;
+}
+
+img {
+    z-index: -1;
+}
+path {
+    fill: none;
+    stroke: /*url(#wood)*/#800;
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 10 20;
+    /*animation: dasharray 5s;
+    animation-iteration-count: 1;*/
+
+}
+
+/*@keyframes dasharray {
+    0% {
+        stroke-dasharray:  0 1000;
+    }
+    100% {
+        stroke-dasharray: 1000 0;
+    }
+}*/
