@@ -1,10 +1,10 @@
 var container = d3.select("#map");
 
-var width = 600;
-var height = 570;
+var realWidth = 1396;
+var realHeight = 1296;
 
-var realWidth = 1350;
-var realHeight = 1250;
+var width = 700;
+var height = realHeight * width / realWidth;
 
 var xScale = d3.scale.linear()
     .domain([0, realWidth])
@@ -21,7 +21,8 @@ imageMap.attr("height", height + "px");
 
 var svg = container.select("svg");
 
-var path = svg.append("path");
+var commonPath = svg.append("path");
+
 var startDiv = container.select("#start_label");
 var finishDiv = container.select("#finish_label");
 
@@ -70,7 +71,7 @@ d3.xml("static/data/testdata.xml", function(data) {
     });
 });
 
-function completePath(data) {
+function completePath(path, data) {
     if (!data) return;
     var line = d3.svg.line()
         .x(function(d) { return xScale(d.x)})
@@ -101,25 +102,60 @@ function completePath(data) {
 
 }
 
-var group504 = container.select("#group_504");
-function drawPath(data) {
-    completePath(data);
-    moveTable(path, group504);
+
+var groupLabels = {
+    "504_SE": container.select("#group_504_SE"),
+    "503_CS": container.select("#group_503_CS"),
+    "504_BI": container.select("#group_504_BI"),
+    "603_CS": container.select("#group_603_CS")
+};
+
+var groupPathes = {
+    "504_SE": svg.append("path").classed("group_504_SE", true),
+    "503_CS": svg.append("path").classed("group_503_CS", true),
+    "504_BI": svg.append("path").classed("group_504_BI", true),
+    "603_CS": svg.append("path").classed("group_603_CS", true)
+};
+
+function drawPath(data, custom_path) {
+    if (custom_path) {
+        completePath(custom_path, data);
+    } else {
+        completePath(commonPath, data);
+        moveTable(["504_SE", "503_CS"]);
+    }
+
 }
 
 
-function moveTable(path, group){
-    var totalLength = path.node().getTotalLength();
-    console.log(totalLength);
+function moveTable(groups){
+    var data = {};
+    var maxLength = 0;
+    groups.forEach(function(d){
+        var p = groupPathes[d].node();
+        var l = p.getTotalLength();
+        if (l > maxLength) {
+            maxLength = l
+        }
+        data[d] = {
+            path: p,
+            total: l,
+            name: d
+        }
+    });
     d3.transition()
-        .duration(totalLength * 100)
+        .duration(maxLength * 100)
         .tween("rotate", function() {
             return function(t) {
-                var coords = path.node().getPointAtLength(t * totalLength);
-                group.style({
-                    top: coords.y + "px",
-                    left: coords.x + "px"
-                });
+                Object.keys(data).forEach(function(key) {
+                    var gr = data[key];
+                    var coords = gr.path.getPointAtLength(t * gr.total);
+                    groupLabels[gr.name].style({
+                        top: coords.y + "px",
+                        left: coords.x + "px"
+                    });
+                })
+
             }
         })
         .transition()
@@ -128,6 +164,27 @@ function moveTable(path, group){
         })
 }
 
+d3.csv("static/data/schedule.csv", function(data) {
+    data = _.groupBy(data, function(d){
+        return d.Weekday
+    });
+    Object.keys(data).forEach(function(key){
+        data[key] = _.groupBy(data[key], function(d){ return d.Group })
+
+    });
+    getData(1,2,groupPathes["504_SE"]);
+
+    //console.log(data);
+    var date = new Date();
+    //console.log(date);
+    //console.log(date.getDay());
+    //console.log(date.getHours());
+
+});
+
+function updateGroup(group) {
+
+}
 
 if (navigator.geolocation) {
     console.log('Geolocation is supported!');

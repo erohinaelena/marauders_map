@@ -7,6 +7,8 @@
 
 <body>
 <script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
+
 <input id="from" type="text"/>
 <input id="to" type="text"/>
 
@@ -21,7 +23,11 @@
   </svg>
   <div id="start_label" class="label">text1</div>
   <div id="finish_label" class="label">text2</div>
-  <div id="group_504" class="group_label">504!</div>
+  <div id="group_504_SE" class="group_label">504_SE!</div>
+  <div id="group_503_CS" class="group_label">503_BI!</div>
+  <div id="group_504_BI" class="group_label">504_BI!</div>
+  <div id="group_603_CS" class="group_label">603_CS!</div>
+
 </div>
 <script>
   function updateNodes() {
@@ -29,14 +35,18 @@
   var node2 = document.getElementById("to").value;
     getData(node1, node2);
   }
-  function getData(node1, node2) {
+  function getData(node1, node2, path) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
 
     xhr.send();
     xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) return;
-      drawPath(JSON.parse(xhr.responseText));
+      if (!path) {
+        drawPath(JSON.parse(xhr.responseText));
+      } else {
+        drawPath(JSON.parse(xhr.responseText), path);
+      }
     }
   }
 </script>
