@@ -1,20 +1,19 @@
 @font-face {
-    font-family: Itim-Regular; /* Гарнитура шрифта */
-    src: local(Itim-Regular), url(../fonts/Itim-Regular.ttf); /* Для остальных браузеров */
+    font-family: MountainsofChristmas-Regular; /* Гарнитура шрифта */
+    src: local(MountainsofChristmas-Regular), url(../fonts/MountainsofChristmas-Regular.ttf); /* Для остальных браузеров */
 }
 
 #map {
     position: relative;
     left: 50px;
     top: 30px;
-    font-family: 'Itim-Regular', Fantasy;
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
     font-weight: 600;
 }
 
 svg, img, #start_label, #finish_label {
     position: absolute;
 }
-
 .group_label {
     position: absolute;
 }
