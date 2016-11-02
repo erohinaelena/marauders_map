@@ -1,14 +1,45 @@
 <html>
-  <head>
-    {% if title %}
-    <title>{{title}} - microblog</title>
-    {% else %}
-    <title>microblog</title>
-    {% endif %}
-  </head>
-  <body>
-    <div>Microblog: <a href="/index">Home</a></div>
-    <hr>
-    {% block content %}{% endblock %}
-  </body>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="static/css/style.css"/>
+  <title>Maradeur's map</title>
+</head>
+
+<body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<input id="from" type="text"/>
+<input id="to" type="text"/>
+
+<button onclick="getData()" id="button">Send request</button>
+
+<div id="startLat"></div>
+<div id="startLon"></div>
+
+<div id="map">
+  <image src="static/img/map.jpg"/>
+  <svg>
+  </svg>
+  <div id="start_label" class="label">text1</div>
+  <div id="finish_label" class="label">text2</div>
+</div>
+<script>
+  function getData() {
+    var node1 = document.getElementById("from").value;
+    var node2 = document.getElementById("to").value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
+
+    xhr.send();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState != 4) return;
+      drawPath(JSON.parse(xhr.responseText));
+      //return xhr.responseText;
+    }
+  }
+</script>
+<script src="static/js/drawAll.js"></script>
+
+</body>
+
 </html>
+
