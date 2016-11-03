@@ -20,7 +20,12 @@ imageMap.attr("height", height + "px");
 
 var svg = container.select("svg");
 
-var commonPath = svg.append("path");
+var commonPath = {
+    path: svg.append("path").classed("floor_0", true),
+    path2: svg.append("path").classed("floor_2", true),
+    path4: svg.append("path").classed("floor_4", true),
+    path5: svg.append("path").classed("floor_5", true)
+};
 
 var startDiv = container.select("#start_label");
 var finishDiv = container.select("#finish_label");
@@ -209,11 +214,19 @@ function completePath(path, data) {
     })
 }
 function completeOnePath(data) {
-    commonPath.attr("d", line(data));
+    Object.keys(commonPath).forEach(function(key) {
+        console.log(key, data[key]);
+        commonPath[key].attr("d", line(data[key]));
+        commonPath[key].attr("opacity", 1)
+            .transition()
+            .duration(1000)
+            .attr("opacity", 1);
+    });
+    /*commonPath.attr("d", line(data));
     commonPath.attr("opacity", 0)
         .transition()
         .duration(1000)
-        .attr("opacity", 1);
+        .attr("opacity", 1);*/
 }
 
 var groupLabels = {
@@ -247,21 +260,21 @@ var groupPathes = {
 };
 
 function drawPath(data, custom_path) {
+    data = {
+        path: data.path.map(function (d) {
+            return data[d]
+        }),
+        path2: data.path2.map(function (d) {
+            return data[d]
+        }),
+        path4: data.path4.map(function (d) {
+            return data[d]
+        }),
+        path5: data.path5.map(function (d) {
+            return data[d]
+        })
+    };
     if (custom_path) {
-        data = {
-            path: data.path.map(function (d) {
-                return data[d]
-            }),
-            path2: data.path2.map(function (d) {
-                return data[d]
-            }),
-            path4: data.path4.map(function (d) {
-                return data[d]
-            }),
-            path5: data.path5.map(function (d) {
-                return data[d]
-            })
-        };
         completePath(custom_path, data);
     } else {
         data = data.path.map(function (d) {
@@ -360,7 +373,7 @@ function updateFloorPath(){
 }
 function setFloor(floor) {
     global_floor = floor;
-    commonPath.attr("opacity", 0);
+    //commonPath.attr("opacity", 0);
     startDiv.style("opacity", 0);
     finishDiv.style("opacity", 0);
     updateFloorPath();

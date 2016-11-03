@@ -1,8 +1,8 @@
 <html>
 <head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="static/css/style.css"/>
-  <title>Maradeur's map</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="static/css/style.css"/>
+    <title>Marauder's map</title>
 </head>
 
 <body>
@@ -10,75 +10,186 @@
 <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
 <script src="static/js/roomDict.js"></script>
 <div class="header_block">
-  <h1>Maradeur's map</h1>
+    <h1>Maradeur's map</h1>
 
 </div>
 
 <div id="map">
-  <div class="floor_header">Floor 2</div>
+    <div class="floor_header">Floor 2</div>
+    <a href="/logout">logout</a>
 
-  <img  class="floor_2" src="static/img/2.png"/>
-  <img  class="floor_4" src="static/img/4.png"/>
-  <img  class="floor_5" src="static/img/5.png"/>
+    <img class="floor_2" src="static/img/2.png"/>
+    <img class="floor_4" src="static/img/4.png"/>
+    <img class="floor_5" src="static/img/5.png"/>
 
-  <svg>
-  </svg>
-  <div id="start_label" class="label">text1</div>
-  <div id="finish_label" class="label">text2</div>
-  <div id="group_504_SE" class="group_label">504_SE!</div>
-  <div id="group_503_CS" class="group_label">503_CS!</div>
-  <div id="group_504_BI" class="group_label">504_BI!</div>
-  <div id="group_603_CS" class="group_label">603_CS!</div>
+    <svg>
+    </svg>
+    <div id="start_label" class="label">text1</div>
+    <div id="finish_label" class="label">text2</div>
+    <div id="group_504_SE" class="group_label">504_SE!</div>
+    <div id="group_503_CS" class="group_label">503_CS!</div>
+    <div id="group_504_BI" class="group_label">504_BI!</div>
+    <div id="group_603_CS" class="group_label">603_CS!</div>
 
 </div>
 
 <div class="right_block">
-  <span>From</span>
+    <br>
+    <br>
+    <br>
+    <button class="button_floor_2" onclick="setFloor(2)">to 2nd floor</button>
+    <br>
+    <button class="button_floor_4" onclick="setFloor(4)">to 4th floor</button>
+    <br>
+    <button class="button_floor_5" onclick="setFloor(5)">to 5th floor</button>
+    <br>
+    <br>
+    <br>
+
+
+    <button class="button_find" onclick="hide_onclick('im_here');">I'm here</button>
+ <span id="im_here" class="hidden" style="display:none;">
+  <span>I'm at:</span>
+  <input id="from1" type="text" size="5"/>
+  <button onclick="updateFromNode(document.getElementById('from1').value)">Change!</button>
+</span>
+
+    <script type="text/javascript">
+        function hide_onclick(id) {
+            display = document.getElementById(id).style.display;
+            if (display == 'none') {
+                document.getElementById(id).style.display = 'block';
+            } else {
+                document.getElementById(id).style.display = 'none';
+            }
+        }
+    </script>
+
+
+    <br>
+    <button class="button_find" onclick="hide_onclick('find_path')">Find Path</button>
+ <span id="find_path" class="hidden" style="display:none;">
+<span>From</span>
   <input id="from" type="text" size="5"/>
   <span>to</span>
   <input id="to" type="text" size="5"/>
-  <button onclick="updateNodes()" id="button">Find path!</button>
+  <button onclick="updateNodes()">Find path!</button>
+</span>
+
+    <br>
+    <button class="button_find" onclick="hide_onclick('find_wc');">Find Chamber of Secrets</button>
+  <span id="find_wc" class="hidden" style="display:none;">
   <br>
-  <button class="button_floor_2" onclick="setFloor(2)">show 2 floor</button>
-  <br>
-  <button class="button_floor_4" onclick="setFloor(4)">show 4 floor</button>
-  <br>
-  <button class="button_floor_5" onclick="setFloor(5)">show 5 floor</button>
+  <button class="button_sex" onclick="getWCPathM()">W</button>
+  <button class="button_sex" onclick="getWCPathW()">M</button><br><br>
+<span>From</span>
+  <input id="from2" type="text" size="5"/>
+  <button onclick="updateFromNode(document.getElementById('from2').value);">Find!</button>
+</span>
+
+    <br>
+    <button class="button_find" onclick="hide_onclick('find_room');">Find Living Room</button>
+ <span id="find_room" class="hidden" style="display:none;">
+  <span>I'm at:</span>
+  <input id="from3" type="text" size="5"/>
+  <button onclick="updateFromNode(document.getElementById('from3').value); getPathToLivingRoom();">Find!</button>
+</span>
+    <br>
+    <button class="button_find" onclick="hide_onclick('find_info');">Find Academic Department</button>
+ <span id="find_info" class="hidden" style="display:none;">
+  <span>I'm at:</span>
+  <input id="from4" type="text" size="5"/>
+  <button onclick="updateFromNode(document.getElementById('from4').value); getPathToAD();" id="button">Find!</button>
+</span>
+
+    <br>
+    <button class="button_find" onclick="setFloor(2)">Mischief Managed</button>
+
 </div>
 
-
 <script>
-  function updateNodes() {
-  var node1 = document.getElementById("from").value;
-  var node2 = document.getElementById("to").value;
-  if (!roomDict[node1] || !roomDict[node2]) {
-    return
-  } else {
-    node1 = roomDict[node1];
-    node2 = roomDict[node2];
-    getData(node1, node2);
-  }
-
-  }
-  function getData(node1, node2, path) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
-    xhr.send();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState != 4) return;
-      if (!path) {
-        drawPath(JSON.parse(xhr.responseText));
-        console.log("common path");
-
-      } else {
-        //console.log("is path");
-        drawPath(JSON.parse(xhr.responseText), path);
-        var fFrom = getFloorFromId(node1);
-        var fTo = getFloorFromId(node2);
-        moveTable(fFrom, fTo)
-      }
+    var node1;
+    var node2;
+    function updateFromNode(node){
+        node1 = node
     }
-  }
+    function updateNodes() {
+        node1 = document.getElementById("from").value;
+        node2 = document.getElementById("to").value;
+        console.log(node1, node2);
+        if (!roomDict[node1] || !roomDict[node2]) {
+            return;
+        } else {
+            node1 = roomDict[node1];
+            node2 = roomDict[node2];
+            getData(node1, node2);
+        }
+
+    }
+    function getData(node1, node2, path) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            if (!path) {
+                drawPath(JSON.parse(xhr.responseText));
+                console.log("common path");
+
+            } else {
+                //console.log("is path");
+                drawPath(JSON.parse(xhr.responseText), path);
+                var fFrom = getFloorFromId(node1);
+                var fTo = getFloorFromId(node2);
+                moveTable(fFrom, fTo)
+            }
+        }
+    }
+    function getWCPathM() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "graph/" + node1 + "/wc_m", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            console.log("wc m path", JSON.parse(xhr.responseText));
+        }
+    }
+    function getWCPathW() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "graph/" + node1 + "/wc_f", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            console.log("wc f path", JSON.parse(xhr.responseText));
+        }
+    }
+    function getPathToLivingRoom() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "graph/" + node1 + "/living_room", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            console.log("wc f path", JSON.parse(xhr.responseText));
+        }
+    }
+    function getPathToAD() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "graph/" + node1 + "/to_AD", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            console.log("path to AD", JSON.parse(xhr.responseText));
+        }
+    }
+    function getOnlineUsers(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "who_is_online", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            console.log("who is online", JSON.parse(xhr.responseText));
+        }
+    }
 </script>
 <script src="static/js/drawAll.js"></script>
 
