@@ -33,8 +33,8 @@ var isEvenClick = true;
 var node1;
 var node2;
 
-d3.xml("static/data/testdata.xml", function(data) {
-    data = [].map.call(data.querySelectorAll("node"), function(node) {
+d3.xml("static/data/testdata.xml", function (xmlData) {
+    xmlData = [].map.call(xmlData.querySelectorAll("node"), function (node) {
         var coords = node.querySelector("attvalues").querySelectorAll("attvalue");
         return {
             id: node.getAttribute("id"),
@@ -43,17 +43,17 @@ d3.xml("static/data/testdata.xml", function(data) {
         };
 
     });
-    svg.on("click", function() {
+    svg.on("click", function () {
         var x = xScale.invert(d3.event.offsetX);
         var y = xScale.invert(d3.event.offsetY);
         console.log(x, y);
         var node = "";
         var distance = Infinity;
 
-        data.forEach(function(d) {
+        xmlData.forEach(function (d) {
             var nodeX = d.coords.x - x;
             var nodeY = d.coords.y - y;
-            var currentDist = Math.sqrt(nodeX*nodeX + nodeY*nodeY);
+            var currentDist = Math.sqrt(nodeX * nodeX + nodeY * nodeY);
             if (currentDist < distance) {
                 distance = currentDist;
                 node = d
@@ -65,32 +65,99 @@ d3.xml("static/data/testdata.xml", function(data) {
             node1 = node.id;
         } else {
             node2 = node.id;
-            getData(node1,node2);
+            getData(node1, node2);
         }
 
     });
+
+    d3.csv("static/data/schedule.csv", function (data) {
+        data = _.groupBy(data, function (d) {
+            return d.Weekday
+        });
+        Object.keys(data).forEach(function (key) {
+            data[key] = _.groupBy(data[key], function (d) {
+                return d.Group
+            })
+
+        });
+        updateGroup(data, xmlData);
+    });
+
+
 });
 
-function completePath(path, data) {
-    if (!data) return;
-    var line = d3.svg.line()
-        .x(function(d) { return xScale(d.x)})
-        .y(function(d) { return yScale(d.y)});
-    var points = data.path.map(function(d) {
-       return data[d]
-    });
-    path.attr("d", line(points));
-    path.attr("opacity", 0)
-        .transition()
-        .duration(1000)
-        .attr("opacity", 1);
+var weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+function updateGroup(data, xmlData) {
+    console.log(xmlData);
+    var date = new Date();
+    //date.setHours(22);
+    //date.setMinutes(48);
+    var weekDay = weekDays[date.getDay() - 1];
+    var hours = date.getHours() + date.getMinutes() / 60;
+    //console.log(date.getHours());
+    var node1 = 0;
+    var node2 = 0;
+    if (!weekDay) {
 
+    }
+    Object.keys(groupLabels).forEach(function(group) {
+        data[weekDay][group].forEach(function(item){
+            var start = item.Time_start.split(":");
+            start = start[0]*1 + start[1]/60;
+            var finish = item.Time_finish.split(":");
+            finish = finish[0]*1 + finish[1]/60;
+            if (hours >= start && hours >= finish && item.Aud_to) {
+                console.log(item.Aud_to, group);
+                var coords = _.find(xmlData, function(d) {
+                    return d.id == roomDict["406"]
+                }).coords;
+                groupLabels[group].style({
+                    top: yScale(coords.y) + "px",
+                    left: xScale(coords.x) + "px"
+                })
+            }
+            if (hours >= start && hours <= finish && item.Aud_from && item.Aud_to) {
+                node1 = roomDict[item.Aud_from];
+                node2 = roomDict[item.Aud_to];
+                //console.log(item.Aud_from, item.Aud_to, node1, node2, group);
+                getData(node1, node2, groupPathes[group]);
+            }
+        });
+        var global_finish = data[weekDay][group][data[weekDay][group].length - 1].Time_finish.split(":");
+        global_finish = global_finish[0]*1 + global_finish[1]/60;
+        var global_start = data[weekDay][group][0].Time_start.split(":");
+        global_start = global_start[0]*1 + global_start[1]/60;
+        if (hours > global_finish) {
+            groupLabels[group]
+                .style({"opacity": "1"})
+                .transition()
+                .duration(500)
+                .style({
+                    "opacity": "0.5",
+                    top: "130px",
+                    left: "310px"
+                })
+        }
+        if (hours < global_start && global_start - hours < 0.3) {
+            groupLabels[group]
+                .style({"opacity": "0"})
+                .transition()
+                .duration(500)
+                .style({"opacity": "1"})
+        }
+
+        //console.log(group, data[weekDay][group])
+    })
+}
+
+
+function updateLabels(points) {
     var startPoint = points[0];
     var finishPoint = points[points.length - 1];
     startDiv
         .text(startPoint.no_room)
         .style({
-            left: (xScale(startPoint.x) - 5)+ "px",
+            left: (xScale(startPoint.x) - 5) + "px",
             top: (yScale(startPoint.y) - 15) + "px"
         });
     finishDiv
@@ -99,6 +166,23 @@ function completePath(path, data) {
             left: (xScale(finishPoint.x) - 10) + "px",
             top: (yScale(finishPoint.y) - 15) + "px"
         });
+}
+
+function completePath(path, data) {
+    if (!data) return;
+    var line = d3.svg.line()
+        .x(function (d) {
+            return xScale(d.x)
+        })
+        .y(function (d) {
+            return yScale(d.y)
+        });
+
+    path.attr("d", line(data));
+    path.attr("opacity", 0)
+        .transition()
+        .duration(1000)
+        .attr("opacity", 1);
 
 }
 
@@ -118,20 +202,24 @@ var groupPathes = {
 };
 
 function drawPath(data, custom_path) {
+    data = data.path.map(function (d) {
+        return data[d]
+    });
     if (custom_path) {
         completePath(custom_path, data);
     } else {
         completePath(commonPath, data);
-        moveTable(["504_SE", "503_CS"]);
+        updateLabels(data)
     }
 
 }
 
 
-function moveTable(groups){
+function moveTable() {
+    var groups = Object.keys(groupPathes);
     var data = {};
     var maxLength = 0;
-    groups.forEach(function(d){
+    groups.forEach(function (d) {
         var p = groupPathes[d].node();
         var l = p.getTotalLength();
         if (l > maxLength) {
@@ -143,11 +231,12 @@ function moveTable(groups){
             name: d
         }
     });
+    
     d3.transition()
-        .duration(maxLength * 100)
-        .tween("rotate", function() {
-            return function(t) {
-                Object.keys(data).forEach(function(key) {
+        .duration(30 * maxLength)
+        .tween("rotate", function () {
+            return function (t) {
+                Object.keys(data).forEach(function (key) {
                     var gr = data[key];
                     var coords = gr.path.getPointAtLength(t * gr.total);
                     groupLabels[gr.name].style({
@@ -159,32 +248,12 @@ function moveTable(groups){
             }
         })
         .transition()
-        .each("end", function(){
+        .each("end", function () {
             console.log("end")
         })
 }
 
-d3.csv("static/data/schedule.csv", function(data) {
-    data = _.groupBy(data, function(d){
-        return d.Weekday
-    });
-    Object.keys(data).forEach(function(key){
-        data[key] = _.groupBy(data[key], function(d){ return d.Group })
 
-    });
-    getData(1,2,groupPathes["504_SE"]);
-
-    //console.log(data);
-    var date = new Date();
-    //console.log(date);
-    //console.log(date.getDay());
-    //console.log(date.getHours());
-
-});
-
-function updateGroup(group) {
-
-}
 
 if (navigator.geolocation) {
     console.log('Geolocation is supported!');
@@ -201,7 +270,7 @@ var defLat = 59.9806333;
 var defLon = 30.325898700000003;
 
 
-var geoSuccess = function(position) {
+var geoSuccess = function (position) {
     startPos = position;
     document.getElementById('startLat').innerHTML = startPos.coords.latitude// - defLat;
     document.getElementById('startLon').innerHTML = startPos.coords.longitude// - defLon;

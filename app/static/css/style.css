@@ -3,11 +3,15 @@
     src: local(Itim-Regular), url(../fonts/Itim-Regular.ttf); /* Для остальных браузеров */
 }
 
+body {
+    background: url(../img/pergament.jpg);
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
+}
+
 #map {
     position: relative;
     left: 50px;
     top: 30px;
-    font-family: 'Itim-Regular', Fantasy;
     font-weight: 600;
 }
 
@@ -29,13 +33,18 @@ img {
 }
 path {
     fill: none;
-    stroke: /*url(#wood)*/#800;
+    stroke: #800;
     stroke-width: 5px;
     stroke-linejoin: round;
     stroke-linecap: round;
     stroke-dasharray: 10 20;
     /*animation: dasharray 5s;
     animation-iteration-count: 1;*/
+
+}
+
+path:hover {
+    stroke: #cc0;
 
 }
 

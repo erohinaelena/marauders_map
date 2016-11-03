@@ -8,23 +8,29 @@
 <body>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
+<script src="static/js/roomDict.js"></script>
+<div>
+  <h1>Maradeur's map</h1>
+  <span>From</span>
+  <input id="from" type="text" size="5"/>
+  <span>to</span>
+  <input id="to" type="text" size="5"/>
+</div>
 
-<input id="from" type="text"/>
-<input id="to" type="text"/>
 
-<button onclick="updateNodes()" id="button">Send request</button>
+<button onclick="updateNodes()" id="button">Find path!</button>
 
 <div id="startLat"></div>
 <div id="startLon"></div>
 
 <div id="map">
-  <image src="static/img/map.jpg"/>
+  <image src="static/img/5.png"/>
   <svg>
   </svg>
   <div id="start_label" class="label">text1</div>
   <div id="finish_label" class="label">text2</div>
   <div id="group_504_SE" class="group_label">504_SE!</div>
-  <div id="group_503_CS" class="group_label">503_BI!</div>
+  <div id="group_503_CS" class="group_label">503_CS!</div>
   <div id="group_504_BI" class="group_label">504_BI!</div>
   <div id="group_603_CS" class="group_label">603_CS!</div>
 
@@ -44,8 +50,12 @@
       if (xhr.readyState != 4) return;
       if (!path) {
         drawPath(JSON.parse(xhr.responseText));
+        console.log("common path");
+
       } else {
+        //console.log("is path");
         drawPath(JSON.parse(xhr.responseText), path);
+        moveTable()
       }
     }
   }
