@@ -1,13 +1,18 @@
 @font-face {
     font-family: Itim-Regular; /* Гарнитура шрифта */
-    src: local(Itim-Regular), url(../fonts/Itim-Regular.ttf); /* Для остальных браузеров */
+    src: local(Itim-Regular), url(../fonts/MountainsofChristmas-Regular.ttf); /* Для остальных браузеров */
 }
 
 body {
     background: url(../img/pergament.jpg);
     font-family: 'MountainsofChristmas-Regular', Fantasy;
 }
-
+.floor_header {
+    font-size: 30px;
+}
+.floor-active {
+    background: #dc0;
+}
 #map {
     position: relative;
     left: 50px;
@@ -18,7 +23,9 @@ body {
 svg, img, #start_label, #finish_label {
     position: absolute;
 }
+button.floor_2, button.floor_4, button.floor_2 {
 
+}
 .group_label {
     position: absolute;
 }

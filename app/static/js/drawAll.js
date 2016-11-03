@@ -13,8 +13,8 @@ var xScale = d3.scale.linear()
 var yScale = d3.scale.linear()
     .domain([0, realHeight])
     .range([0, height]);
-
-var imageMap = container.select("img");
+var global_floor = 2;
+var imageMap = container.selectAll("img");
 
 imageMap.attr("width", width + "px");
 imageMap.attr("height", height + "px");
@@ -38,8 +38,9 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
         var coords = node.querySelector("attvalues").querySelectorAll("attvalue");
         return {
             id: node.getAttribute("id"),
-            name: node.getAttribute("id") + " id, " + coords[0].getAttribute("value") + " name",
-            coords: {x: coords[1].getAttribute("value"), y: coords[2].getAttribute("value")}
+            aud: coords[2].getAttribute("value"),
+            name: node.getAttribute("id") + " id, " + coords[2].getAttribute("value") + " name",
+            coords: {x: coords[1].getAttribute("value"), y: coords[0].getAttribute("value")}
         };
 
     });
@@ -54,12 +55,13 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
             var nodeX = d.coords.x - x;
             var nodeY = d.coords.y - y;
             var currentDist = Math.sqrt(nodeX * nodeX + nodeY * nodeY);
-            if (currentDist < distance) {
+            var currentFloor = (d.id*1 <= 111) ? 4 : (d.id.toString()[0] == "5")? 5 : 2;
+            if (currentDist < distance && currentFloor == global_floor) {
                 distance = currentDist;
                 node = d
             }
         });
-        console.log(node.name);
+        //console.log(node.name);
         isEvenClick = !isEvenClick;
         if (!isEvenClick) {
             node1 = node.id;
@@ -88,7 +90,6 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
 
 var weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 function updateGroup(data, xmlData) {
-    console.log(xmlData);
     var date = new Date();
     //date.setHours(22);
     //date.setMinutes(48);
@@ -107,14 +108,20 @@ function updateGroup(data, xmlData) {
             var finish = item.Time_finish.split(":");
             finish = finish[0]*1 + finish[1]/60;
             if (hours >= start && hours >= finish && item.Aud_to) {
-                console.log(item.Aud_to, group);
+                //console.log(item.Aud_to, group);
                 var coords = _.find(xmlData, function(d) {
-                    return d.id == roomDict["406"]
-                }).coords;
-                groupLabels[group].style({
-                    top: yScale(coords.y) + "px",
-                    left: xScale(coords.x) + "px"
-                })
+                    return d.id == roomDict[item.Aud_to]
+                });
+                if (!coords) {
+                    console.log(item)
+                } else {
+                    coords = coords.coords;
+                    groupLabels[group].style({
+                        top: yScale(coords.y) + "px",
+                        left: xScale(coords.x) + "px"
+                    })
+                }
+
             }
             if (hours >= start && hours <= finish && item.Aud_from && item.Aud_to) {
                 node1 = roomDict[item.Aud_from];
@@ -231,7 +238,7 @@ function moveTable() {
             name: d
         }
     });
-    
+
     d3.transition()
         .duration(30 * maxLength)
         .tween("rotate", function () {
@@ -253,29 +260,50 @@ function moveTable() {
         })
 }
 
+function setFloor(floor) {
+    global_floor = floor;
+    console.log(d3.select(".floor_" + floor));
+    d3.select(".floor_header").text("Floor " + floor);
+    if (floor == 2) {
+        d3.selectAll("img.floor_4, img.floor_5")
+            .style("opacity", 0);
+        d3.select("img.floor_2")
+            .transition()
+            .duration(200)
+            .style("opacity", 1);
 
+        d3.selectAll("button.floor_4, button.floor_5").classed("floor-active", false);
 
-if (navigator.geolocation) {
-    console.log('Geolocation is supported!');
+        d3.select("button.floor_2").classed("floor-active", true)
+    }
+    if (floor == 4) {
+        d3.selectAll("img.floor_2, img.floor_5")
+            .style("opacity", 0);
+        d3.select("img.floor_4")
+            .transition()
+            .duration(200)
+            .style("opacity", 1);
+
+        d3.selectAll("button.floor_2, button.floor_5").classed("floor-active", false);
+
+        d3.select("button.floor_4").classed("floor-active", true)
+
+    }
+    if (floor == 5) {
+        d3.selectAll("img.floor_2, img.floor_4")
+            .style("opacity", 0);
+        d3.select("img.floor_5")
+            .transition()
+            .duration(200)
+            .style("opacity", 1);
+
+        d3.selectAll("button.floor_2, button.floor_4").classed("floor-active", false);
+
+        d3.select("button.floor_5").classed("floor-active", true)
+
+    }
+
 }
-else {
-    console.log('Geolocation is not supported for this Browser/OS version yet.');
-}
+setFloor(2);
 
-var startPos;
-var geoOptions = {
-    enableHighAccuracy: true
-};
-var defLat = 59.9806333;
-var defLon = 30.325898700000003;
-
-
-var geoSuccess = function (position) {
-    startPos = position;
-    document.getElementById('startLat').innerHTML = startPos.coords.latitude// - defLat;
-    document.getElementById('startLon').innerHTML = startPos.coords.longitude// - defLon;
-};
-navigator.geolocation.getCurrentPosition(geoSuccess);
-
-//console.log(Date.now())
 

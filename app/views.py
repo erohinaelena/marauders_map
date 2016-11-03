@@ -24,7 +24,7 @@ def get_path_json(node1,node2):
         location = 'app/static/au_graph.gexf'
         G = nx.read_gexf(location)
 	result = {}
-	path = nx.shortest_path(G, node1, node2)
+	path = nx.shortest_path(G, node1, node2, weight='weight')
 	result['path'] = path
 
 	for node in path:

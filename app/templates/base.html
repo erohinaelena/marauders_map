@@ -19,12 +19,20 @@
 
 
 <button onclick="updateNodes()" id="button">Find path!</button>
+<br>
+<button class="floor_2" onclick="setFloor(2)">show 2 floor</button>
+<br>
+<button class="floor_4" onclick="setFloor(4)">show 4 floor</button>
+<br>
+<button class="floor_5" onclick="setFloor(5)">show 5 floor</button>
 
-<div id="startLat"></div>
-<div id="startLon"></div>
+<div class="floor_header">Floor 2</div>
 
 <div id="map">
-  <image src="static/img/5.png"/>
+  <image  class="floor_2" src="static/img/2.png"/>
+  <image  class="floor_4" src="static/img/4.png"/>
+  <image  class="floor_5" src="static/img/5.png"/>
+
   <svg>
   </svg>
   <div id="start_label" class="label">text1</div>
@@ -39,12 +47,18 @@
   function updateNodes() {
   var node1 = document.getElementById("from").value;
   var node2 = document.getElementById("to").value;
+  if (!roomDict[node1] || !roomDict[node2]) {
+    return
+  } else {
+    node1 = roomDict[node1];
+    node2 = roomDict[node2];
     getData(node1, node2);
+  }
+
   }
   function getData(node1, node2, path) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
-
     xhr.send();
     xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) return;
