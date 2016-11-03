@@ -1,15 +1,23 @@
-<!-- extend from base layout -->
-{% extends "base.html" %}
-
 {% block content %}
 <h1>Sign In</h1>
 <form action="" method="post" name="login">
     {{form.hidden_tag()}}
     <p>
-        Please enter your OpenID:<br>
-        {{form.openid(size=80)}}<br>
+        Login:<br>
+        {{form.username(size=30)}}<br>
+        {% for error in form.errors.username %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
     </p>
-    <p>{{form.remember_me}} Remember Me</p>
+    <p>
+        Group:<br>
+        {{form.group(size=30)}}<br>
+    </p>
+    <p>
+        Where are you? <br>
+        {{form.location(size=30)}}<br>
+    </p>
+   <!-- <p>{{form.remember_me}} Remember Me</p> -->
     <p><input type="submit" value="Sign In"></p>
 </form>
 {% endblock %}
