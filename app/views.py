@@ -29,7 +29,7 @@ location = 'app/static/au_graph.gexf'
 G = nx.read_gexf(location)
 tmp = nx.get_node_attributes(G, 'no_room')
 rooms_map = {v: k for k, v in tmp.iteritems()}
-
+rooms_map[777] = '16'
 
 def load_users():
     from os import listdir
@@ -48,7 +48,7 @@ def load_users():
 
 class LoginForm(Form):
     username = StringField('Login:', [validators.DataRequired()])
-    group = StringField('Group:', [validators.DataRequired()])
+    group = StringField('Group:', [validators.AnyOf(values=['504', '503', '603'], message='There is no such group in AU.')])
     location = StringField('Where are you?', [validators.DataRequired()])
 
     def __init__(self, *args, **kwargs):
@@ -70,24 +70,27 @@ class User(UserMixin):
 
 @app.before_request
 def before_request():
-    load_users()
     g.user = current_user
 
 
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # print load_users()
     # if g.user is not None and g.user.is_authenticated():
     #     return redirect(url_for("index"))
     form = LoginForm()
-    user = User(form.username.data, form.group.data, form.location.data)
     if form.validate_on_submit():
-        return redirect('/index')
+        location = form.location.data
+        if location not in rooms_map.keys():
+            location = 777
+        user = User(form.username.data, form.group.data, location)
+        return redirect(url_for("index"))
     return render_template('login.html', form=form)
 
 
 # some protected url
-@app.route('/')
+
 @app.route('/index')
 def index():
     return render_template("base.html",
@@ -120,8 +123,10 @@ def check_valid_users():
             del users[user]
 
 
+
 @app.route('/who_is_online')
 def who_is_online():
+    load_users()
     check_valid_users()
     print ('ROOMS MAP', rooms_map)
     response = []
@@ -129,6 +134,7 @@ def who_is_online():
         user_room_id = rooms_map[users[u]['no_room']]
         response.append({'name': u, 'x': G.node[user_room_id]['x'], 'y': G.node[user_room_id]['y']})
     return json.dumps(response)
+
 
 
 

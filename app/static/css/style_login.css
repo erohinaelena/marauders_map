@@ -1,0 +1,29 @@
+@font-face {
+    font-family: MountainsofChristmas-Regular;
+    src: local(Itim-Regular), url(../fonts/MountainsofChristmas-Regular.ttf); 
+}
+
+body {
+    background: url(../img/pergament.jpg);
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
+    font-size: x-large;
+}
+
+
+img {
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
+}
+h1 {
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
+    text-align: center; 
+}
+form {
+    text-align: center;
+
+}
+input {
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
+    border-radius: 5px;
+    border-color: peru;
+}
+
