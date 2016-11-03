@@ -1,13 +1,16 @@
-{% block content %}
+<!-- extend from base layout -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="static/css/style_login.css"/>
+  <title>Maradeur's map</title>
+</head>
+<body>
 <h1>Sign In</h1>
 <form action="" method="post" name="login">
-    {{form.hidden_tag()}}
     <p>
         Login:<br>
         {{form.username(size=30)}}<br>
-        {% for error in form.errors.username %}
-        <span style="color: red;">[{{error}}]</span>
-        {% endfor %}<br>
     </p>
     <p>
         Group:<br>
@@ -19,5 +22,6 @@
     </p>
    <!-- <p>{{form.remember_me}} Remember Me</p> -->
     <p><input type="submit" value="Sign In"></p>
+    <p><img src="static/img/large.png" alt="альтернативный текст"></p>
 </form>
-{% endblock %}
+</html>
