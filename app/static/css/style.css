@@ -1,6 +1,6 @@
 @font-face {
-    font-family: Itim-Regular; /* Гарнитура шрифта */
-    src: local(Itim-Regular), url(../fonts/MountainsofChristmas-Regular.ttf); /* Для остальных браузеров */
+    font-family: MountainsofChristmas-Regular; /* Гарнитура шрифта */
+    src: local(MountainsofChristmas-Regular), url(../fonts/MountainsofChristmas-Regular.ttf); /* Для остальных браузеров */
 }
 
 body {
@@ -9,6 +9,7 @@ body {
 }
 .floor_header {
     font-size: 30px;
+    margin-left: 300px;
 }
 .floor-active {
     background: #dc0;
@@ -16,14 +17,14 @@ body {
 #map {
     position: relative;
     left: 50px;
-    top: 30px;
     font-weight: 600;
+    float:left;
 }
 
 svg, img, #start_label, #finish_label {
     position: absolute;
 }
-button.floor_2, button.floor_4, button.floor_2 {
+.button_floor_2, .button_floor_4, .button_floor_2 {
 
 }
 .group_label {
@@ -53,6 +54,16 @@ path {
 path:hover {
     stroke: #cc0;
 
+}
+
+.right_block {
+    float: left;
+    margin-left: 430px;
+}
+
+.header_block {
+    padding-left: 275px;
+    font-size: 22px;
 }
 
 /*@keyframes dasharray {

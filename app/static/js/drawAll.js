@@ -113,7 +113,8 @@ function updateGroup(data, xmlData) {
                     return d.id == roomDict[item.Aud_to]
                 });
                 if (!coords) {
-                    console.log(item)
+
+                    groupLabels[group].style("opacity", 0)
                 } else {
                     coords = coords.coords;
                     groupLabels[group].style({
@@ -272,21 +273,21 @@ function setFloor(floor) {
             .duration(200)
             .style("opacity", 1);
 
-        d3.selectAll("button.floor_4, button.floor_5").classed("floor-active", false);
+        d3.selectAll(".button_floor_4, .button_floor_5").classed("floor-active", false);
 
-        d3.select("button.floor_2").classed("floor-active", true)
+        d3.select(".button_floor_2").classed("floor-active", true)
     }
     if (floor == 4) {
-        d3.selectAll("img.floor_2, img.floor_5")
+        d3.selectAll("img_floor_2, img_floor_5")
             .style("opacity", 0);
         d3.select("img.floor_4")
             .transition()
             .duration(200)
             .style("opacity", 1);
 
-        d3.selectAll("button.floor_2, button.floor_5").classed("floor-active", false);
+        d3.selectAll(".button_floor_2,.button_floor_5").classed("floor-active", false);
 
-        d3.select("button.floor_4").classed("floor-active", true)
+        d3.select(".button_floor_4").classed("floor-active", true)
 
     }
     if (floor == 5) {
@@ -297,9 +298,9 @@ function setFloor(floor) {
             .duration(200)
             .style("opacity", 1);
 
-        d3.selectAll("button.floor_2, button.floor_4").classed("floor-active", false);
+        d3.selectAll(".button_floor_2, .button_floor_4").classed("floor-active", false);
 
-        d3.select("button.floor_5").classed("floor-active", true)
+        d3.select(".button_floor_5").classed("floor-active", true)
 
     }
 
