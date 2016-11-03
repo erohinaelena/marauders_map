@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <style>
+      body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+      figure { margin: 0; width: 100%; height: 100%; }
+      svg { width: 100%; height: 100%; }
+    </style>
+  </head>
+
+  <body>
+    
+    <figure class="clock"></figure>
+    
+    <script>
+      
+      var margin = { top: 40, right: 10, bottom: 20, left: 10 };
+      var w = d3.select('.clock').node().clientWidth - margin.left - margin.right;
+      var h = d3.select('.clock').node().clientHeight - margin.top - margin.bottom;
+      
+      // radius of entire figure
+      var r = Math.min(w, h)/2;
+      
+      
+      
+      // drag behavior
+      var drag = d3.behavior.drag()
+      	.on('dragstart', dragstart)
+      	.on('drag', drag);
+      
+      function dragstart() {
+        d3.select(this).select('.slider-background')
+        	.transition()
+        	.attr('r', clock.sliderR);
+      }
+      
+      function drag() {
+        var mouse = Math.atan2(d3.event.y, d3.event.x);
+        var deg = mouse / (Math.PI/ 180) + 90;
+        var arcMouse = deg < 0 ? 360 + deg : deg;
+        var which = d3.select(this).attr('class');
+        
+        // move slider element
+        d3.select(this).select('.slider-background').attr({
+          cx: function(d) { return d.ringR * Math.cos(mouse) },
+          cy: function(d) { return d.ringR * Math.sin(mouse); }
+        });
+        d3.select(this).select('.slider').attr({
+          cx: function(d) { return d.ringR * Math.cos(mouse) },
+        	cy: function(d) { return d.ringR * Math.sin(mouse); }
+        });
+        d3.select(this).select('.content').attr({
+          x: function(d) { return d.ringR * Math.cos(mouse) },
+        	y: function(d) { return d.ringR * Math.sin(mouse) + 5.5; }
+        });
+        
+        // move hand element
+        d3.select('line.' + which)
+        	.attr({
+            x2: function(d) { return d.length * Math.cos(mouse); },
+            y2: function(d) { return d.length * Math.sin(mouse); },
+        	});
+        if (which == 'minute') {
+        	d3.select('slider.'+'hour').select('.slider-background').attr({
+            cx: function(d) { return d.ringR * Math.cos(mouse) },
+            cy: function(d) { return d.ringR * Math.sin(mouse); }
+          });
+          d3.select('slider.'+'hour').select('.slider').attr({
+            cx: function(d) { return d.ringR * Math.cos(mouse) },
+            cy: function(d) { return d.ringR * Math.sin(mouse); }
+          });
+          d3.select('slider.'+'hour').select('.content').attr({
+            x: function(d) { return d.ringR * Math.cos(mouse) },
+            y: function(d) { return d.ringR * Math.sin(mouse) + 5.5; }
+          });
+          
+          // move hand element
+          d3.select('line.' + which)
+            .attr({
+              x2: function(d) { return d.length * Math.cos(mouse); },
+              y2: function(d) { return d.length * Math.sin(mouse); },
+            });
+        }
+        
+        // move arcs
+        // d3.select('path.' + which)
+        // 	.attr({
+        //   	d: function(d) {
+        //       var arcR = d.length/2;
+        //       return arc({
+        //         outerRadius: arcR,
+        //       	startAngle: 0, 
+        //       	endAngle: arcMouse * (Math.PI/180)
+        //       })
+        //     }
+        // 	});
+        
+        	
+      }
+      
+      var clock = { 
+        r: r - 105,
+        faceColor: '#FCFFF5',
+        tickColor: '#B2B2B2',
+        sliderR: 15,
+        hands: [
+          {
+            type: 'minute',
+            content: 'M',
+            value: 0,
+            length: r - 105, 
+            ringR: r, // radius of surrounding ring
+            color: '#91AA9D',
+            width: 4,
+            labels: d3.range(5,61,5),
+            scale: d3.scale.linear().domain([0,59]).range([0,354])
+          },
+          {
+            type: 'hour',
+            content: 'H',
+            value: 0,
+            length: r - 125,
+            ringR: r - 33,
+            color: '#3E606F',
+            width: 6,
+            ticks: d3.range(0, 60), // start, stop, step
+            tickLength: 10,
+            tickStrokeWidth: 1,
+            scale: d3.scale.linear().domain([0,59]).range([0,354]),
+            temp: 1	
+            // hour_hand: hands[2]
+          },
+          // {
+          //   type: 'hour',
+          //   content: 'H',
+          //   value: 0,
+          //   length: r - 150,
+          //   ringR: r - 66,
+          //   color: '#193441',
+          //   width: 8,
+          //   ticks: d3.range(0, 12),
+          //   tickLength: 20,
+          //   tickStrokeWidth: 2,
+          //   scale: d3.scale.linear().domain([0,11]).range([0,330])
+          // }
+        ]
+      }
+      
+      // add arcs for clock
+      var arc = d3.svg.arc().innerRadius(0);
+      
+      // SVG -> G with margin convention
+      var svg = d3.select('.clock').append('svg');
+      var g = svg.append('g')
+      	.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      
+      // Clock Face
+      var face = g.append('g')
+      	.datum(clock)
+      	.attr('transform', 'translate(' + w/2 + ',' + r + ')');
+      
+      face.append('circle')
+      	.attr({
+        	r: function(d) { return d.r; },
+        	fill: function(d) { return d.faceColor; },
+        	stroke: function(d) { return d.tickColor; },
+        	'stroke-width': 2
+      	});
+      
+      var ticks = face.selectAll('g')
+      	.data( function(d) { return d.hands; })
+     	.enter().append('g')
+      	// only get ticks for hour, minute
+      	.filter(function(d, i) { return i > 0; });
+      
+      ticks.selectAll('.tick')
+      	.data( function(d) {
+        	return d.ticks.map(function(rangeValue) {
+            return {
+              location: d.scale(rangeValue),
+              tickLength: d.tickLength,
+              tickStrokeWidth: d.tickStrokeWidth
+            }
+      		})
+        })
+      .enter().append('line')
+      	.classed('tick', true)
+      	.attr({
+        	x1: 0,
+        	y1: clock.r,
+        	x2: 0,
+        	y2: function(d) { return clock.r - d.tickLength; },
+        	stroke: clock.tickColor,
+        	'stroke-width': function(d) { return d.tickStrokeWidth; },
+        	transform: function(d) { return 'rotate(' + d.location + ')'; }
+      	});
+      
+      face.selectAll('.tick-label')
+      	.data( function(d) {
+        	return d3.range(5, 61, 5).map(function(rangeValue) {
+            return {
+              location: d.hands[0].scale(rangeValue),
+              scale: d.hands[0].scale,
+              value: rangeValue,
+              radius: clock.r + 15
+            }
+      		})
+        })
+      .enter().append('text')
+      	.classed('.tick-label', true)
+      	.text(function(d) { return d.value; })
+      	.attr({
+        	'text-anchor': 'middle',
+        	'fill': clock.tickColor,
+        	'font-family': 'sans-serif',
+        	'font-size': 10,
+        	x: function(d) {
+            return d.radius * Math.sin(d.location * (Math.PI / 180));
+          },
+        	y: function(d) {
+            return -d.radius * Math.cos(d.location * (Math.PI / 180)) + 4.5;
+          }
+        	
+      	});
+      
+      // append arcs
+      var arcs = face.selectAll('path')
+      	.data( function(d) { return d.hands; })
+      .enter().append('path')
+      	.attr('class', function(d) {return d.type; })
+      	.attr({
+          fill: function(d) { return d.color; },
+          opacity: 0.5
+        });
+      
+      var hands = face.selectAll('.hand')
+      	.data( function(d) { return d.hands; })
+     	.enter().append('line')
+      	.attr('class', function(d) {
+          return 'hands ' + d.type;
+        })
+      	.attr({
+        	x1: 0,
+          y1: 0,
+          x2: function(d) { return d.length * Math.cos(270 * (Math.PI / 180)); },
+          y2: function(d) { return d.length * Math.sin(270 * (Math.PI / 180)); },
+          stroke: function(d) { return d.color; },
+          'stroke-width': function(d) { return d.width; },
+          'stroke-linecap': 'round'
+        });
+
+      // center circle
+      face.append('circle')
+      	.classed('center', true)
+      	.attr({
+        	r: r/20,
+        	fill: clock.hands[1].color
+      	});
+      
+      var rings = face.selectAll('.outer-ring')
+      	.data( function(d) { return d.hands; })
+      .enter().append('g')
+      	.classed('outer-ring', true);
+      
+      // outer ring
+      rings.append('circle')
+      	.classed('ring', true)
+      	.attr({
+          r: function(d) { return d.ringR; },
+          fill: 'transparent',
+          stroke: clock.tickColor,
+          'stroke-width': 1
+        });
+      
+      var sliderGroup = rings.append('g')
+      	.attr('class', function(d) {
+          return d.type;
+        })
+      	.style('cursor', 'move')
+      	.on('mouseover', function() { 
+          d3.select(this).select('.slider-background')
+          	.transition().attr('r', (clock.sliderR * 1.5) + 10);
+        })
+      	.on('mouseleave', function() {
+          d3.select(this).select('.slider-background')
+          	.transition().attr('r', clock.sliderR * 1.5);
+        })
+      	.call(drag);
+
+      // slider
+      sliderGroup.append('circle')
+      	.classed('slider', true)
+      	.attr({
+        	r: clock.sliderR,
+        	fill: function(d) { return d.color; },
+        	cx: function(d) { return d.ringR * Math.cos(270 * (Math.PI / 180)) },
+        	cy: function(d) { return d.ringR * Math.sin(270 * (Math.PI / 180)); }
+      	});
+      
+      // slider content
+      sliderGroup.append('text')
+      	.classed('content', true)
+      	.text(function(d) { return d.content; })
+      	.attr({
+        	fill: 'white',
+        	'text-anchor': 'middle',
+        	'font-size': 16,
+        	'font-family': 'sans-serif',
+        	x: function(d) { return d.ringR * Math.cos(270 * (Math.PI / 180)) },
+        	y: function(d) { 
+            return d.ringR * Math.sin(270 * (Math.PI / 180)) + 5.5; 
+          }
+      	});
+      
+      
+      
+      
+      
+      
+     
+    </script>
+  </body>
