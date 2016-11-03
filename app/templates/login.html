@@ -1,4 +1,3 @@
-<!-- extend from base layout -->
 <html>
 <head>
   <meta charset="utf-8">
@@ -11,16 +10,25 @@
     <p>
         Login:<br>
         {{form.username(size=30)}}<br>
+                {% for error in form.errors.username %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
     </p>
     <p>
         Group:<br>
         {{form.group(size=30)}}<br>
+                        {% for error in form.errors.group %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
     </p>
     <p>
         Where are you? <br>
         {{form.location(size=30)}}<br>
+                        {% for error in form.errors.location %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %} <br>
     </p>
-   <!-- <p>{{form.remember_me}} Remember Me</p> -->
+
     <p><input type="submit" value="Sign In"></p>
     <p><img src="static/img/large.png" alt="альтернативный текст"></p>
 </form>
