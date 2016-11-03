@@ -1,5 +1,4 @@
 var container = d3.select("#map");
-
 var realWidth = 1396;
 var realHeight = 1296;
 
@@ -32,6 +31,9 @@ svg.attr("height", height + "px");
 var isEvenClick = true;
 var node1;
 var node2;
+function getFloorFromId(id) {
+    return (id * 1 <= 111) ? 4 : (id.toString()[0] == "5") ? 5 : 2;
+}
 
 d3.xml("static/data/testdata.xml", function (xmlData) {
     xmlData = [].map.call(xmlData.querySelectorAll("node"), function (node) {
@@ -55,7 +57,7 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
             var nodeX = d.coords.x - x;
             var nodeY = d.coords.y - y;
             var currentDist = Math.sqrt(nodeX * nodeX + nodeY * nodeY);
-            var currentFloor = (d.id * 1 <= 111) ? 4 : (d.id.toString()[0] == "5") ? 5 : 2;
+            var currentFloor = getFloorFromId(d.id);
             if (currentDist < distance && currentFloor == global_floor) {
                 distance = currentDist;
                 node = d
@@ -91,9 +93,9 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
 var weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 function updateGroup(data, xmlData) {
     var date = new Date();
-    //date.setHours(22);
-    //date.setMinutes(48);
-    var weekDay = weekDays[date.getDay() - 1];
+    date.setHours(10);
+    date.setMinutes(46);
+    var weekDay = "Friday"//weekDays[date.getDay() - 1];
     var hours = date.getHours() + date.getMinutes() / 60;
     //console.log(date.getHours());
     var node1 = 0;
@@ -128,7 +130,7 @@ function updateGroup(data, xmlData) {
         });
 
         if (!coords) {
-            console.log("!coords", group);
+            //console.log("!coords", group);
             groupLabels[group].style("opacity", 0)
         } else {
             coords = coords.coords;
@@ -175,12 +177,14 @@ function updateLabels(points) {
     startDiv
         .text(startPoint.no_room)
         .style({
+            opacity: 1,
             left: (xScale(startPoint.x) - 5) + "px",
             top: (yScale(startPoint.y) - 15) + "px"
         });
     finishDiv
         .text(finishPoint.no_room)
         .style({
+            opacity: 1,
             left: (xScale(finishPoint.x) - 10) + "px",
             top: (yScale(finishPoint.y) - 15) + "px"
         });
@@ -195,7 +199,7 @@ var line = d3.svg.line()
 
 function completePath(path, data) {
     if (!data) return;
-    console.log(data);
+    console.log(path);
     Object.keys(path).forEach(function(key) {
         path[key].attr("d", line(data[key]));
         path[key].attr("opacity", 0)
@@ -221,18 +225,22 @@ var groupLabels = {
 
 var groupPathes = {
     "504_SE": {
+        path: svg.append("path").classed("group_504_SE floor_0", true),
         path2: svg.append("path").classed("group_504_SE floor_2", true),
         path4: svg.append("path").classed("group_504_SE floor_4", true),
         path5: svg.append("path").classed("group_504_SE floor_5", true)},
     "503_CS": {
+        path: svg.append("path").classed("group_503_CS floor_0", true),
         path2: svg.append("path").classed("group_503_CS floor_2", true),
         path4: svg.append("path").classed("group_503_CS floor_4", true),
         path5: svg.append("path").classed("group_503_CS floor_5", true)},
     "504_BI": {
+        path: svg.append("path").classed("group_504_BI floor_0", true),
         path2: svg.append("path").classed("group_504_BI floor_2", true),
         path4: svg.append("path").classed("group_504_BI floor_4", true),
         path5: svg.append("path").classed("group_504_BI floor_5", true)},
     "603_CS": {
+        path: svg.append("path").classed("group_603_SE floor_0", true),
         path2: svg.append("path").classed("group_603_SE floor_2", true),
         path4: svg.append("path").classed("group_603_SE floor_4", true),
         path5: svg.append("path").classed("group_603_SE floor_5", true)}
@@ -241,13 +249,16 @@ var groupPathes = {
 function drawPath(data, custom_path) {
     if (custom_path) {
         data = {
-            path2: data.path.map(function (d) {
+            path: data.path.map(function (d) {
                 return data[d]
             }),
-            path4: data.path.map(function (d) {
+            path2: data.path2.map(function (d) {
                 return data[d]
             }),
-            path5: data.path.map(function (d) {
+            path4: data.path4.map(function (d) {
+                return data[d]
+            }),
+            path5: data.path5.map(function (d) {
                 return data[d]
             })
         };
@@ -262,8 +273,8 @@ function drawPath(data, custom_path) {
 }
 
 
-function moveTable() {
-    console.log("mavet");
+function moveTable(floorFrom, floorTo) {
+    console.log(floorFrom, floorTo);
     var groups = Object.keys(groupPathes);
     var data = {};
     var maxLength = 0;
@@ -284,16 +295,20 @@ function moveTable() {
         });
 
     });
-
-    /*d3.transition()
-        .duration(30 * maxLength)
+    console.log(maxLength);
+    setFloor(floorFrom);
+    updateFloorPath();
+    d3.transition()
+        .ease("linear")
+        .duration(3000)
         .tween("rotate", function () {
             return function (t) {
                 Object.keys(data).forEach(function (key) {
                     var gr = data[key];
-                    var coords = gr.path.getPointAtLength(t * gr.total);
-                    console.log(coords);
-                    groupLabels[gr.name].style({
+                    var currentPath = "path" + floorFrom;
+                    var coords = gr[currentPath].path.getPointAtLength(t * gr[currentPath].total);
+                    //console.log(groupLabels[gr.name]);
+                    groupLabels[gr[currentPath].name].style({
                         top: coords.y + "px",
                         left: coords.x + "px"
                     });
@@ -303,13 +318,52 @@ function moveTable() {
         })
         .transition()
         .each("end", function () {
+            if (floorFrom != floorTo) {
+                setFloor(floorTo);
+                updateFloorPath();
+                d3.transition()
+                    .ease("linear")
+                    .duration(3000)
+                    .tween("rotate", function () {
+                        return function (t) {
+                            Object.keys(data).forEach(function (key) {
+                                var gr = data[key];
+                                var currentPath = "path" + floorTo;
+                                var coords = gr[currentPath].path.getPointAtLength(t * gr[currentPath].total);
+                                //console.log(groupLabels[gr.name]);
+                                groupLabels[gr[currentPath].name].style({
+                                    top: coords.y + "px",
+                                    left: coords.x + "px"
+                                });
+                            })
+                        }
+                    })
+                    .transition()
+                    .each("end", function () {
+                        console.log("end")
+                    })
+            }
             console.log("end")
-        })*/
+        })
 }
-
+function updateFloorPath(){
+    svg.selectAll("path.floor_" + global_floor).style("opacity",1);
+    if (global_floor == 5) {
+        svg.selectAll("path.floor_4, path.floor_2").style("opacity",0)
+    }
+    if (global_floor == 4) {
+        svg.selectAll("path.floor_2, path.floor_5").style("opacity",0)
+    }
+    if (global_floor == 2) {
+        svg.selectAll("path.floor_4, path.floor_5").style("opacity",0)
+    }
+}
 function setFloor(floor) {
     global_floor = floor;
-    console.log(d3.select(".floor_" + floor));
+    commonPath.attr("opacity", 0);
+    startDiv.style("opacity", 0);
+    finishDiv.style("opacity", 0);
+    updateFloorPath();
     d3.select(".floor_header").text("Floor " + floor);
     if (floor == 2) {
         d3.selectAll("img.floor_4, img.floor_5")
@@ -352,5 +406,9 @@ function setFloor(floor) {
 
 }
 setFloor(2);
+
+
+
+
 
 

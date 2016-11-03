@@ -9,6 +9,9 @@ body, input, button {
 input, button {
     border-radius: 5px;
 }
+path.floor_0 {
+    opacity: 0;
+}
 body {
     background: url(../img/pergament.jpg);
 }
