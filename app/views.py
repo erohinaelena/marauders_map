@@ -24,6 +24,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+
+
+@login_manager.user_loader
+def load_user(id):
+    with open ('app/users/' + id + '.txt', 'r') as user:
+        for line in user:
+            params = line.split()
+            return User(params[0], params[1], params[2])
+
+
 users = {}
 location = 'app/static/au_graph.gexf'
 G = nx.read_gexf(location)
@@ -31,24 +41,26 @@ tmp = nx.get_node_attributes(G, 'no_room')
 rooms_map = {v: k for k, v in tmp.iteritems()}
 rooms_map[777] = '16'
 
+
 def load_users():
     from os import listdir
     from os.path import isfile, join
     onlyfiles = [('app/users/' + f) for f in listdir('app/users/') if isfile(join('app/users/', f))]
     print onlyfiles
     for f in onlyfiles:
-        if (f.split('.')[0] != 'app/users/None' and f.split('.')[0] != 'app/users/'):
+        if f.split('.')[0] != 'app/users/None' and f.split('.')[0] != 'app/users/':
             with open(f, 'r') as cur_user:
                 for line in cur_user:
                     params = line.split()
                     print params
-                    users[params[0]] = {'name': params[0], 'no_room': int(params[2]), 'group': int(params[1]), 'hours': params[3], 'minutes': params[4]}
-
+                    users[params[0]] = {'name': params[0], 'no_room': int(params[2]), 'group': int(params[1]),
+                                        'hours': params[3], 'minutes': params[4]}
 
 
 class LoginForm(Form):
     username = StringField('Login:', [validators.DataRequired()])
-    group = StringField('Group:', [validators.AnyOf(values=['504', '503', '603'], message='There is no such group in AU.')])
+    group = StringField('Group:',
+                        [validators.AnyOf(values=['504', '503', '603'], message='There is no such group in AU.')])
     location = StringField('Where are you?', [validators.DataRequired()])
 
     def __init__(self, *args, **kwargs):
@@ -67,6 +79,24 @@ class User(UserMixin):
             info.write(str(username) + ' ' + str(group) + ' ' + str(location) + ' ' + self.hour + ' ' + self.minutes)
             info.close()
 
+    def get_id(self):
+        return self.username
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
+
+    def __repr__(self):
+        return '<User %r>' % (self.username)
+
 
 @app.before_request
 def before_request():
@@ -77,14 +107,17 @@ def before_request():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # print load_users()
-    # if g.user is not None and g.user.is_authenticated():
-    #     return redirect(url_for("index"))
+    print g.user
+    if g.user is not None and g.user.is_authenticated:
+        return redirect(url_for("index"))
     form = LoginForm()
     if form.validate_on_submit():
         location = form.location.data
         if location not in rooms_map.keys():
             location = 777
         user = User(form.username.data, form.group.data, location)
+        login_user(user)
+        print g.user
         return redirect(url_for("index"))
     return render_template('login.html', form=form)
 
@@ -92,6 +125,7 @@ def login():
 # some protected url
 
 @app.route('/index')
+@login_required
 def index():
     return render_template("base.html",
                            title='Home')
@@ -117,11 +151,11 @@ def check_valid_users():
         current_minutes = datetime.datetime.now().minute
         print('CURRENT TIME', current_hours, current_minutes)
         print ('USERS LAST LOGIN', users[user]['hours'], users[user]['minutes'])
-        tdelta = (int(current_hours)*60 + int(current_minutes) - int(users[user]['hours']) * 60 - int(users[user]['minutes']))
+        tdelta = (
+        int(current_hours) * 60 + int(current_minutes) - int(users[user]['hours']) * 60 - int(users[user]['minutes']))
         print ('DIFF', tdelta)
         if tdelta >= 90:
             del users[user]
-
 
 
 @app.route('/who_is_online')
@@ -134,8 +168,6 @@ def who_is_online():
         user_room_id = rooms_map[users[u]['no_room']]
         response.append({'name': u, 'x': G.node[user_room_id]['x'], 'y': G.node[user_room_id]['y']})
     return json.dumps(response)
-
-
 
 
 def get_floor_by_id(node):
