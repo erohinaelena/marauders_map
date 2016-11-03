@@ -29,7 +29,7 @@ location = 'app/static/au_graph.gexf'
 G = nx.read_gexf(location)
 tmp = nx.get_node_attributes(G, 'no_room')
 rooms_map = {v: k for k, v in tmp.iteritems()}
-
+rooms_map[777] = '16'
 
 def load_users():
     from os import listdir
@@ -82,7 +82,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         location = form.location.data
-        if int(location) not in rooms_map.keys():
+        if location not in rooms_map.keys():
             location = 777
         user = User(form.username.data, form.group.data, location)
         return redirect(url_for("index"))
@@ -123,6 +123,7 @@ def check_valid_users():
             del users[user]
 
 
+
 @app.route('/who_is_online')
 def who_is_online():
     load_users()
@@ -133,6 +134,7 @@ def who_is_online():
         user_room_id = rooms_map[users[u]['no_room']]
         response.append({'name': u, 'x': G.node[user_room_id]['x'], 'y': G.node[user_room_id]['y']})
     return json.dumps(response)
+
 
 
 
