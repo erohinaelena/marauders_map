@@ -80,8 +80,8 @@
     <button class="button_find" onclick="hide_onclick('find_wc');">Find Chamber of Secrets</button>
   <span id="find_wc" class="hidden" style="display:none;">
   <br>
-  <button class="button_sex" onclick="getWCPathM()">W</button>
-  <button class="button_sex" onclick="getWCPathW()">M</button><br><br>
+  <button class="button_sex" onclick="getWCPathW()">W</button>
+  <button class="button_sex" onclick="getWCPathM()">M</button><br><br>
 <span>From</span>
   <input id="from2" type="text" size="5"/>
   <button onclick="updateFromNode(document.getElementById('from2').value);">Find!</button>
@@ -108,10 +108,10 @@
 </div>
 
 <script>
-    var node1;
+    var node1 = 16;
     var node2;
     function updateFromNode(node){
-        node1 = node
+        node1 = roomDict[node]
     }
     function updateNodes() {
         node1 = document.getElementById("from").value;
