@@ -73,7 +73,9 @@
       } else {
         //console.log("is path");
         drawPath(JSON.parse(xhr.responseText), path);
-        moveTable()
+        var fFrom = getFloorFromId(node1);
+        var fTo = getFloorFromId(node2);
+        moveTable(fFrom, fTo)
       }
     }
   }
