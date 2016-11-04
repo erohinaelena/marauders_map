@@ -54,6 +54,15 @@ def before_request():
     g.user = current_user
 
 
+def RepresentsInt(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,11 +72,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         location = form.location.data
+        if RepresentsInt(location):
+            location = int(location)
         if location not in rooms_map.keys():
             location = 777
         user = User(form.username.data, form.group.data, location)
         users[form.username.data] = {'name': user.username, 'no_room': user.location, 'group': user.group,
                                      'hours': user.hour, 'minutes': user.minutes}
+        print (users[user.username])
         login_user(user)
         print g.user
         return redirect(url_for("index"))
@@ -168,6 +180,7 @@ def check_in(node1):
 def who_am_i():
     return json.dumps(users[g.user.username])
 
+
 @app.route('/graph/<node1>/<node2>')
 def get_path_json(node1, node2):
     return json.dumps(get_path(node1, node2))
@@ -182,8 +195,10 @@ def find_wc_m(node1):
 
 @app.route('/graph/<node1>/wc_f')
 def find_wc_f(node1):
+    print ("Path from ", node1, "to wcW")
     wc_f = ['5015', '61', '2126']
     path = [nx.shortest_path_length(G, node1, x, weight='weight') for x in wc_f]
+    print path
     return get_path_json(node1, wc_f[path.index(min(path))])
 
 
