@@ -10,7 +10,7 @@ body {
 }
 
 p {
-    height: 35px;
+    height: 3px;
 }
 img {
     font-family: 'MountainsofChristmas-Regular', Fantasy;
@@ -21,11 +21,13 @@ h1 {
 }
 form {
     text-align: center;
+    position: center;
 
 }
 input {
     font-family: 'MountainsofChristmas-Regular', Fantasy;
     border-radius: 5px;
-    border-color: peru;
+    position: static;
 }
+
 
