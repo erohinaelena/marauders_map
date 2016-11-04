@@ -10,7 +10,7 @@ input, button {
 
 body {
     background: url(../img/pergament.jpg);
-    background-repeat: repeat;
+    background-size: cover;
     font-family: 'MountainsofChristmas-Regular', Fantasy;
     font-size: x-large;
 }
