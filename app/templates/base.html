@@ -16,7 +16,6 @@
 
 <div id="map">
     <div class="floor_header">Floor 2</div>
-    <a href="/logout">logout</a>
 
     <img class="floor_2" src="static/img/2.png"/>
     <img class="floor_4" src="static/img/4.png"/>
@@ -46,17 +45,9 @@
     <br>
     <br>
 
-
-    <button class="button_find" onclick="hide_onclick('im_here');">I'm here</button>
- <span id="im_here" class="hidden" style="display:none;">
-  <span>I'm at:</span>
-  <input id="from1" type="text" size="5"/>
-  <button onclick="updateFromNode(document.getElementById('from1').value)">Change!</button>
-</span>
-
     <script type="text/javascript">
         function hide_onclick(id) {
-            display = document.getElementById(id).style.display;
+            var display = document.getElementById(id).style.display;
             if (display == 'none') {
                 document.getElementById(id).style.display = 'block';
             } else {
@@ -64,46 +55,58 @@
             }
         }
     </script>
+    <!-- Я здесь -->
+    <button class="button_find" onclick="hide_onclick('im_here');">I'm here</button>
+    <span id="im_here" class="hidden" style="display:none;">
+        <span>I'm at:</span>
+        <input id="from1" type="text" size="5"/>
+        <button onclick="updateFromNode(document.getElementById('from1').value)">Change!</button>
+    </span>
 
-
+    <!-- Построить путь между 2 точками -->
     <br>
     <button class="button_find" onclick="hide_onclick('find_path')">Find Path</button>
- <span id="find_path" class="hidden" style="display:none;">
-<span>From</span>
-  <input id="from" type="text" size="5"/>
-  <span>to</span>
-  <input id="to" type="text" size="5"/>
-  <button onclick="updateNodes()">Find path!</button>
-</span>
+    <span id="find_path" class="hidden" style="display:none;">
+        <span>From</span> <input id="from" type="text" size="5"/>
+        <span>to</span> <input id="to" type="text" size="5"/>
+        <button onclick="updateNodes()">Find path!</button>
+    </span>
 
+    <!-- Построить путь в туалет -->
     <br>
     <button class="button_find" onclick="hide_onclick('find_wc');">Find Chamber of Secrets</button>
-  <span id="find_wc" class="hidden" style="display:none;">
-  <br>
-  <button class="button_sex" onclick="getWCPathW()">W</button>
-  <button class="button_sex" onclick="getWCPathM()">M</button><br><br>
-<span>From</span>
-  <input id="from2" type="text" size="5"/>
-  <button onclick="updateFromNode(document.getElementById('from2').value);">Find!</button>
-</span>
+    <span id="find_wc" class="hidden" style="display:none;">
+        <br>
+        <button class="button_sex" onclick="getWCPathW()">W</button>
+        <button class="button_sex" onclick="getWCPathM()">M</button>
+        <br>
+        <br>
+        <span>From</span><input id="from2" type="text" size="5"/>
+        <button onclick="updateFromNode(document.getElementById('from2').value);">Find!</button>
+    </span>
 
+    <!-- Построить путь в комнату отдыха -->
     <br>
     <button class="button_find" onclick="hide_onclick('find_room');">Find Living Room</button>
- <span id="find_room" class="hidden" style="display:none;">
-  <span>I'm at:</span>
-  <input id="from3" type="text" size="5"/>
-  <button onclick="updateFromNode(document.getElementById('from3').value); getPathToLivingRoom();">Find!</button>
-</span>
+    <span id="find_room" class="hidden" style="display:none;">
+        <span>I'm at:</span>
+        <input id="from3" type="text" size="5"/>
+        <button onclick="updateFromNode(document.getElementById('from3').value); getPathToLivingRoom();">Find!</button>
+    </span>
+
+    <!-- Построить путь в учебный отдел -->
     <br>
     <button class="button_find" onclick="hide_onclick('find_info');">Find Academic Department</button>
- <span id="find_info" class="hidden" style="display:none;">
-  <span>I'm at:</span>
-  <input id="from4" type="text" size="5"/>
-  <button onclick="updateFromNode(document.getElementById('from4').value); getPathToAD();" id="button">Find!</button>
-</span>
+    <span id="find_info" class="hidden" style="display:none;">
+        <span>I'm at:</span>
+        <input id="from4" type="text" size="5"/>
+        <button onclick="updateFromNode(document.getElementById('from4').value); getPathToAD();" id="button">Find!</button>
+    </span>
 
     <br>
-    <button class="button_find" onclick="setFloor(2)">Mischief Managed</button>
+
+    <!-- Разлогиниться-->
+    <a href="/logout"><button class="button_find">Mischief Managed</button></a>
 
 </div>
 
