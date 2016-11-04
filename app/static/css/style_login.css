@@ -3,6 +3,11 @@
     src: local(Itim-Regular), url(../fonts/MountainsofChristmas-Regular.ttf); 
 }
 
+
+input, button {
+    border-radius: 5px;
+}
+
 body {
     background: url(../img/pergament.jpg);
     font-family: 'MountainsofChristmas-Regular', Fantasy;
@@ -34,11 +39,13 @@ input {
 button{
     background: url(../img/wood_button_push.jpg);
     border-color: #997300;
+    border-radius: 5px;
 }
 
 button:active {
     background: url(../img/wood_button_pull.jpg);
     border-color: #662200;
+    border-radius: 5px;
     color: white;
 }
 
