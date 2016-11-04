@@ -9,24 +9,48 @@
 <form action="" method="post" name="login">
     <p>
         Login:<br>
-        {{form.username(size=30)}}<br>
-                {% for error in form.errors.username %}
-        <span style="color: red;">[{{error}}]</span>
+        <span style= "position:absolute">{{form.username(size=30)}}</span>
+        {% for error in form.errors.group %}
+        <span style="
+        color: red; 
+        font-size: 70%; 
+        position:relative;
+        left: 200px;
+        bottom: 7px;
+	width:300px;">[{{error}}]</span>
         {% endfor %}<br>
+
     </p>
     <p>
-        Group:<br>
-        {{form.group(size=30)}}<br>
-                        {% for error in form.errors.group %}
-        <span style="color: red;">[{{error}}]</span>
+        Group: <br>
+
+        <span style= "position:absolute">{{form.group(size=30)}} </span>
+        {% for error in form.errors.group %}
+        <span style="
+        color: red; 
+        font-size: 70%; 
+        position:relative;
+        left: 200px;
+        bottom: 7px;
+	width:300px;">[{{error}}]</span>
         {% endfor %}<br>
+
+
+
     </p>
     <p>
         Where are you? <br>
-        {{form.location(size=30)}}<br>
-                        {% for error in form.errors.location %}
-        <span style="color: red;">[{{error}}]</span>
-        {% endfor %} <br>
+        <span style= "position:absolute">{{form.location(size=30)}}</span>
+        {% for error in form.errors.group %}
+        <span style="
+        color: red; 
+        font-size: 70%; 
+        position:relative;
+        left: 200px;
+        bottom: 7px;
+	width:300px;">[{{error}}]</span>
+        {% endfor %}<br>
+
     </p>
 
     <p><input type="submit" value="Sign In"></p>
