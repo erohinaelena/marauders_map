@@ -60,7 +60,7 @@
     <span id="im_here" class="hidden" style="display:none;">
         <span>I'm at:</span>
         <input id="from1" type="text" size="5"/>
-        <button onclick="updateFromNode(document.getElementById('from1').value)">Change!</button>
+        <button onclick="checkin(document.getElementById('from1').value); updateFromNode(document.getElementById('from1').value)">Change!</button>
     </span>
 
     <!-- Построить путь между 2 точками -->
@@ -148,6 +148,18 @@
             }
         }
     }
+
+
+    function checkin(loc) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "check_in/" + loc, true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            console.log("checked in");
+        }
+    }
+
     function getWCPathM() {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "graph/" + node1 + "/wc_m", true);
@@ -199,4 +211,3 @@
 </body>
 
 </html>
-
