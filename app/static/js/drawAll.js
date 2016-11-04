@@ -318,7 +318,7 @@ function updateGroupLabelsFloor(floor) {
     });
 }
 function moveTable(floorFrom, floorTo) {
-    console.log(floorFrom, floorTo);
+    //console.log(floorFrom, floorTo);
     var groups = Object.keys(groupPathes);
     var data = {};
     var maxLength = 0;
@@ -339,13 +339,13 @@ function moveTable(floorFrom, floorTo) {
         });
 
     });
-    console.log(maxLength);
+    //console.log(maxLength);
     setFloor(floorFrom);
     updateGroupLabelsFloor(floorFrom)
     updateFloorPath();
     d3.transition()
         .ease("linear")
-        .duration(3000)
+        .duration(3000, 10)
         .tween("rotate", function () { return function (t) { moveToPath(t,floorFrom,data) } })
         .transition()
         .each("end", function () {

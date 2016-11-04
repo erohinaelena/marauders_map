@@ -5,12 +5,12 @@
     <title>Marauder's map</title>
 </head>
 
-<body>
+<body onload = "whoAmI()">
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js"></script>
 <script src="static/js/roomDict.js"></script>
 <div class="header_block">
-    <h1>Maradeur's map</h1>
+    <h1>Marauder's map</h1>
 
 </div>
 
@@ -32,7 +32,7 @@
 
 </div>
 
-<div class="right_block">
+<div class="right_block" >
     <br>
     <br>
     <br>
@@ -59,7 +59,7 @@
     <button class="button_find" onclick="hide_onclick('im_here');">I'm here</button>
     <span id="im_here" class="hidden" style="display:none;">
         <span>I'm at:</span>
-        <input id="from1" type="text" size="5"/>
+        <input class="from" id="from1" type="text" size="5"/>
         <button onclick="checkin(document.getElementById('from1').value); updateFromNode(document.getElementById('from1').value)">Change!</button>
     </span>
 
@@ -67,7 +67,7 @@
     <br>
     <button class="button_find" onclick="hide_onclick('find_path')">Find Path</button>
     <span id="find_path" class="hidden" style="display:none;">
-        <span>From</span> <input id="from" type="text" size="5"/>
+        <span>From</span> <input class="from" id="from" type="text" size="5"/>
         <span>to</span> <input id="to" type="text" size="5"/>
         <button onclick="updateNodes()">Find path!</button>
     </span>
@@ -81,7 +81,7 @@
         <button class="button_sex" onclick="getWCPathM()">M</button>
         <br>
         <br>
-        <span>From</span><input id="from2" type="text" size="5"/>
+        <span>From</span><input class="from" id="from2" type="text" size="5"/>
         <button onclick="updateFromNode(document.getElementById('from2').value);">Find!</button>
     </span>
 
@@ -90,7 +90,7 @@
     <button class="button_find" onclick="hide_onclick('find_room');">Find Living Room</button>
     <span id="find_room" class="hidden" style="display:none;">
         <span>I'm at:</span>
-        <input id="from3" type="text" size="5"/>
+        <input class="from" id="from3" type="text" size="5"/>
         <button onclick="updateFromNode(document.getElementById('from3').value); getPathToLivingRoom();">Find!</button>
     </span>
 
@@ -99,7 +99,7 @@
     <button class="button_find" onclick="hide_onclick('find_info');">Find Academic Department</button>
     <span id="find_info" class="hidden" style="display:none;">
         <span>I'm at:</span>
-        <input id="from4" type="text" size="5"/>
+        <input class="from" id="from4" type="text" size="5"/>
         <button onclick="updateFromNode(document.getElementById('from4').value); getPathToAD();" id="button">Find!</button>
     </span>
 
@@ -114,6 +114,7 @@
     var node1 = 16;
     var node2;
     function updateFromNode(node){
+        d3.selectAll(".from").attr("value", node);
         node1 = roomDict[node]
     }
     function updateNodes() {
@@ -129,6 +130,19 @@
         }
 
     }
+    function whoAmI(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "/whoami", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            var data = JSON.parse(xhr.responseText);
+            node1 = roomDict[data.no_room];
+            updateFromNode(data.no_room);
+            console.log("i am", data);
+        }
+    }
+
     function getData(node1, node2, path) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
@@ -167,15 +181,18 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             console.log("wc m path", JSON.parse(xhr.responseText));
+            drawPath(JSON.parse(xhr.responseText));
         }
     }
     function getWCPathW() {
         var xhr = new XMLHttpRequest();
+        console.log(node1, "!");
         xhr.open('GET', "graph/" + node1 + "/wc_f", true);
         xhr.send();
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             console.log("wc f path", JSON.parse(xhr.responseText));
+            drawPath(JSON.parse(xhr.responseText));
         }
     }
     function getPathToLivingRoom() {
@@ -185,6 +202,7 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             console.log("wc f path", JSON.parse(xhr.responseText));
+            drawPath(JSON.parse(xhr.responseText));
         }
     }
     function getPathToAD() {
@@ -194,6 +212,7 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             console.log("path to AD", JSON.parse(xhr.responseText));
+            drawPath(JSON.parse(xhr.responseText));
         }
     }
     function getOnlineUsers(){
@@ -203,8 +222,10 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             console.log("who is online", JSON.parse(xhr.responseText));
+            drawPath(JSON.parse(xhr.responseText));
         }
     }
+    //document.onload = whoAmI();
 </script>
 <script src="static/js/drawAll.js"></script>
 
