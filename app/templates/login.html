@@ -9,49 +9,58 @@
 <form action="" method="post" name="login">
     <p>
         Login:<br>
-        <span style= "position:absolute">{{form.username(size=30)}}</span>
-        {% for error in form.errors.group %}
+    </p>
+    <p>
+        {{form.username(size=30)}}
+    </p>
+    <p>
+        {% for error in form.errors.username %}
         <span style="
-        color: red; 
-        font-size: 70%; 
+        color: maroon; 
+        font-size: 70%;        
         position:relative;
         left: 200px;
         bottom: 7px;
+        bottom: 35px;
 	width:300px;">[{{error}}]</span>
         {% endfor %}<br>
-
     </p>
     <p>
         Group: <br>
-
-        <span style= "position:absolute">{{form.group(size=30)}} </span>
+    </p>
+    <p>
+          {{form.group(size=30)}} 
+    </p>
+    <p>
         {% for error in form.errors.group %}
         <span style="
-        color: red; 
+        color: maroon; 
         font-size: 70%; 
         position:relative;
         left: 200px;
         bottom: 7px;
+        bottom: 35px;
 	width:300px;">[{{error}}]</span>
         {% endfor %}<br>
-
-
-
     </p>
     <p>
         Where are you? <br>
-        <span style= "position:absolute">{{form.location(size=30)}}</span>
-        {% for error in form.errors.group %}
+    </p>
+    <p>
+          {{form.location(size=30)}}
+    </p>
+    <aside>
+        {% for error in form.errors.location %}
         <span style="
-        color: red; 
+        color: maroon; 
         font-size: 70%; 
-        position:relative;
+        position: relative;
         left: 200px;
-        bottom: 7px;
+        bottom: 35px;
 	width:300px;">[{{error}}]</span>
         {% endfor %}<br>
 
-    </p>
+    </aside>
 
     <p><input type="submit" value="Sign In"></p>
     <p><img src="static/img/large.png" alt="альтернативный текст"></p>
