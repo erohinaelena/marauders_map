@@ -5,7 +5,7 @@ import os
 import networkx as nx
 from flask import Response, redirect, url_for
 from flask import render_template, g
-from flask_login import LoginManager, UserMixin, \
+from flask_login import LoginManager, \
     login_required, login_user, logout_user
 from flask_login import current_user
 from forms import LoginForm
@@ -67,7 +67,7 @@ def login():
             location = 777
         user = User(form.username.data, form.group.data, location)
         users[form.username.data] = {'name': user.username, 'no_room': user.location, 'group': user.group,
-                                        'hours': user.hour, 'minutes': user.minutes}
+                                     'hours': user.hour, 'minutes': user.minutes}
         login_user(user)
         print g.user
         return redirect(url_for("index"))
@@ -147,6 +147,20 @@ def get_path(node1, node2):
     for node in path:
         result[node] = G.node[node]
     return result
+
+
+@app.route('/check_in/<node1>', methods=['GET', 'POST'])
+def check_in(node1):
+    print ("User ", g.user.username, " wants to change location to ", node1)
+    users[g.user.username]['no_room'] = int(node1)
+    new_hour = str(datetime.datetime.now().hour)
+    new_minutes = str(datetime.datetime.now().minute)
+    users[g.user.username]['hour'] = new_hour
+    users[g.user.username]['minute'] = new_minutes
+    with open('app/users/' + g.user.username + '.txt', 'w') as cur_user:
+        cur_user.write(str(g.user.username) + ' ' + str(g.user.group) + ' ' + str(
+            g.user.location) + ' ' + g.user.hour + ' ' + g.user.minutes)
+    return redirect(url_for("index"))
 
 
 @app.route('/graph/<node1>/<node2>')
