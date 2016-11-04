@@ -351,7 +351,7 @@ function moveTable(floorFrom, floorTo) {
         .each("end", function () {
             if (floorFrom != floorTo) {
                 setFloor(floorTo);
-                updateGroupLabelsFloor(floorTo)
+                updateGroupLabelsFloor(floorTo);
                 updateFloorPath();
                 d3.transition()
                     .ease("linear")
@@ -373,7 +373,7 @@ function updateFloorPath(){
         .transition()
         .duration(200)
         .style("opacity", 1);
-    d3.select(".floor_header").text("Floor " + global_floor)
+    d3.select(".floor_header").text("Floor " + global_floor);
     [2,4,5].forEach(function(floor) {
         if (floor != global_floor) {
             d3.select(".button_floor_" + floor).classed("floor-active", false);
