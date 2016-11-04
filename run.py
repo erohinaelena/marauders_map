@@ -8,4 +8,4 @@ from app import app
 from app.views import load_users
 
 load_users()
-app.run(debug = True)
+app.run(host='192.168.210.39')
