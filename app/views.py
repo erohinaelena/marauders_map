@@ -111,6 +111,7 @@ def check_valid_users():
         print ('DIFF', tdelta)
         if tdelta >= 90:
             del users[user]
+            os.remove('app/users/' + user + '.txt')
 
 
 @app.route('/who_is_online')
@@ -155,8 +156,8 @@ def check_in(node1):
     users[g.user.username]['no_room'] = int(node1)
     new_hour = str(datetime.datetime.now().hour)
     new_minutes = str(datetime.datetime.now().minute)
-    users[g.user.username]['hour'] = new_hour
-    users[g.user.username]['minute'] = new_minutes
+    users[g.user.username]['hours'] = new_hour
+    users[g.user.username]['minutes'] = new_minutes
     with open('app/users/' + g.user.username + '.txt', 'w') as cur_user:
         cur_user.write(str(g.user.username) + ' ' + str(g.user.group) + ' ' + str(
             g.user.location) + ' ' + g.user.hour + ' ' + g.user.minutes)
