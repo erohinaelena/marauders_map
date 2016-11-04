@@ -163,6 +163,10 @@ def check_in(node1):
     return redirect(url_for("index"))
 
 
+@app.route('/whoami')
+def who_am_i():
+    return json.dumps(users[g.user.username])
+
 @app.route('/graph/<node1>/<node2>')
 def get_path_json(node1, node2):
     return json.dumps(get_path(node1, node2))
