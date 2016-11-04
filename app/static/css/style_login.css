@@ -28,6 +28,17 @@ input {
     font-family: 'MountainsofChristmas-Regular', Fantasy;
     border-radius: 5px;
     position: static;
+    background: #EEE8AA;
 }
 
+button{
+    background: url(../img/wood_button_push.jpg);
+    border-color: #997300;
+}
+
+button:active {
+    background: url(../img/wood_button_pull.jpg);
+    border-color: #662200;
+    color: white;
+}
 
