@@ -262,9 +262,9 @@ function updateLabels(points) {
             left: (xScale(hintCoords.x) - 50) + "px",
             top: (yScale(hintCoords.y)) + "px"
         });
-        updateHint();
-        updateFloorPath();
     }
+    updateHint();
+    updateFloorPath();
 
 }
 var line = d3.svg.line()
@@ -526,14 +526,57 @@ function drawLoggedUsers(data) {
 }
 setInterval(function(){
     getOnlineUsers();
-    updateFloorPath()
+    updateFloorPath();
 }, 1000);
+setInterval(function(){
+    //getOnlineUsers();
+    //updateFloorPath()
+    getRandomPath5();
+}, 10000);
 getOnlineUsers();
 
 var bigK = d3.select("#K");
-function randomWalking() {
+var pathK = svg.append("path").style("opacity", 0);
+console.log(Object.values(roomDict).filter(function(v){return v[0] == "5"}));
+
+function draw5Path(data) {
+    data = {
+        path: data.path.map(function(d) {return data[d]})
+    };
+    pathK.attr("d", line(data.path));
+    var total = pathK.node().getTotalLength();
+    d3.transition()
+        .ease("linear")
+        .duration(1000 + Math.random() * 6000)
+        .tween("rotate", function () { return function (t) {
+            var coords = pathK.node().getPointAtLength(t * total);
+                bigK.style({
+                    top: coords.y + "px",
+                    left: coords.x + "px"
+                })
+            }
+        })
+        .transition()
+        .each("end", function () {});
+    //completeOnePath(data);
 
 }
+var startNode5 = Math.floor(Math.random() * nodes5.length);
+function getRandomPath5() {
+    var next = Math.floor(Math.random() * nodes5.length);
+    if (startNode5 != next) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "graph/" + startNode5 + "/" + next + "", true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+            draw5Path(JSON.parse(xhr.responseText));
+            startNode5 = next;
+        }
+    }
+
+}
+
 
 
 
