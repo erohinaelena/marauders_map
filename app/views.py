@@ -108,6 +108,7 @@ def index():
 def logout():
     if current_user != login_manager.anonymous_user:
         print g.user.username
+        del users[g.user.username]
         os.remove('app/users/' + g.user.username + '.txt')
 
     logout_user()
@@ -141,7 +142,6 @@ from random import randint
 @app.route('/who_is_online')
 def who_is_online():
     check_valid_users()
-    print ('ROOMS MAP', rooms_map)
     response = []
     for u in users.keys():
         user_room_id = rooms_map[users[u]['no_room']]
