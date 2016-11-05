@@ -62,7 +62,6 @@ def RepresentsInt(s):
         return False
 
 
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -121,9 +120,12 @@ def check_valid_users():
             int(current_hours) * 60 + int(current_minutes) - int(users[user]['hours']) * 60 - int(
                 users[user]['minutes']))
         print ('DIFF', tdelta)
-        if tdelta >= 90:
+        if tdelta >= 90 or tdelta < 0:
             del users[user]
             os.remove('app/users/' + user + '.txt')
+
+
+from random import randint
 
 
 @app.route('/who_is_online')
@@ -133,7 +135,8 @@ def who_is_online():
     response = []
     for u in users.keys():
         user_room_id = rooms_map[users[u]['no_room']]
-        response.append({'name': u, 'x': G.node[user_room_id]['x'], 'y': G.node[user_room_id]['y']})
+        response.append({'name': u, 'x': G.node[user_room_id]['x'] + randint(-20, 20),
+                         'y': G.node[user_room_id]['y'] + randint(-20, 20), 'no_room': users[u]['no_room']})
     return json.dumps(response)
 
 
