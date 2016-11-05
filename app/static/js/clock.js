@@ -253,8 +253,9 @@ sliderGroup.append('text')
 function moveHand(witch)
 {
     var mouse = delta[witch] - (last[witch] - new Date()) / den[witch];//Math.atan2(d3.event.y, d3.event.x);
-    mouse = mouse % Math.PI;
-    var deg = mouse / (Math.PI/ 180) + 90;
+    console.log(mouse)
+    //mouse = mouse % Math.PI;
+    var deg = mouse % Math.PI / (Math.PI/ 180) + 90;
     deg = deg < 0 ? deg + 360 : deg;
 
     time[witch] = witch == "minute" ? deg / 6 : deg / 30;
@@ -281,7 +282,8 @@ function moveHand(witch)
 }
 
 setInterval(function(){
-    moveHand('minute');
-    moveHand('hour');
+    //moveHand('minute');
+    //moveHand('hour');
+    //console.log(time)
 }, 1000);
       

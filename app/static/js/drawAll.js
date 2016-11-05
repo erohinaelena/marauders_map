@@ -1,3 +1,5 @@
+var customTime = new Date();
+
 var container = d3.select("#map");
 var realWidth = 1396;
 var realHeight = 1296;
@@ -30,7 +32,7 @@ var commonPath = {
 
 var startDiv = container.select("#start_label");
 var finishDiv = container.select("#finish_label");
-var hint = container.select("hint");
+var hint = container.select(".hint");
 
 svg.attr("width", width + "px");
 svg.attr("height", height + "px");
@@ -98,6 +100,39 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
             //updateGroupBySchedule(data, xmlData);
         }, 1000);
         updateGroupBySchedule(data, xmlData);
+        document.onkeydown = function(e) {
+            console.log(e);
+            if (e.keyCode == 39) {
+                var prevHours = customTime.getHours();
+                prevHours++;
+                prevHours = prevHours > 23 ? 0 : prevHours;
+                customTime.setHours(prevHours);
+                updateGroupBySchedule(data, xmlData);
+
+            } else if (e.keyCode == 37) {
+                prevHours = customTime.getHours();
+                prevHours--;
+                prevHours = prevHours < 0 ? 23 : prevHours;
+                customTime.setHours(prevHours);
+                updateGroupBySchedule(data, xmlData);
+
+            } else if (e.keyCode == 40) {
+                var prevMinutes = customTime.getMinutes();
+                prevMinutes--;
+                prevMinutes = prevMinutes < 0 ? 59 : prevMinutes;
+                customTime.setMinutes(prevMinutes);
+                updateGroupBySchedule(data, xmlData);
+
+            }else if (e.keyCode == 38) {
+                prevMinutes = customTime.getMinutes();
+                prevMinutes++;
+                prevMinutes = prevMinutes > 59 ? 0 : prevMinutes;
+                customTime.setMinutes(prevMinutes);
+                updateGroupBySchedule(data, xmlData);
+
+            }
+
+        }
     });
 
 
@@ -105,17 +140,12 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
 
 var weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 function updateGroupBySchedule(data, xmlData) {
-    var date = new Date();
+    var date = new Date()//customTime;
     date.setHours(10);
     date.setMinutes(46);
     var weekDay = "Friday"//weekDays[date.getDay() - 1];
     var hours = date.getHours() + date.getMinutes() / 60;
-    //console.log(date.getHours());
-    var node1 = 16;
-    var node2 = 16;
-    if (!weekDay) {
 
-    }
     Object.keys(groupLabels).forEach(function (group) {//для каждой группы
         var coords;
         var currentAud = {};
@@ -139,11 +169,12 @@ function updateGroupBySchedule(data, xmlData) {
             }
 
             if (hours >= start && hours <= finish && item.Aud_from && item.Aud_to) { //если сейчас им как раз пора переходить, то вое он, путь для анимации
-                node1 = roomDict[item.Aud_from];
-                node2 = roomDict[item.Aud_to];
+                var node1 = roomDict[item.Aud_from];
+                var node2 = roomDict[item.Aud_to];
                 if (!node1 || !node2) {
                     console.log(item.Aud_from, item.Aud_to, node1, node2, group);
                 } else {
+                    console.log("move!",item.Aud_from, item.Aud_to, group);
                     getData(node1, node2, groupPathes[group], group);
                 }
             }
@@ -194,12 +225,13 @@ function updateGroupBySchedule(data, xmlData) {
     updateFloorPath();
 }
 
-
+var startFloor;
+var finishFloor;
 function updateLabels(points) {
     var startPoint = points.path[0];
     var finishPoint = points.path[points.path.length - 1];
-    var startFloor = getFloorFromId(roomDict[startPoint.no_room]) || global_floor;
-    var finishFloor = getFloorFromId(roomDict[finishPoint.no_room]) || global_floor;
+    startFloor = getFloorFromId(roomDict[startPoint.no_room]) || global_floor;
+    finishFloor = getFloorFromId(roomDict[finishPoint.no_room]) || global_floor;
     [startDiv, finishDiv].forEach(function(block) {
         [2,4,5].forEach(function(floor) {
             block.classed("floor_" + floor, false)
@@ -221,6 +253,19 @@ function updateLabels(points) {
             left: (xScale(finishPoint.x)) + "px",
             top: (yScale(finishPoint.y)) + "px"
         });
+    if (startFloor != finishFloor) {
+        var p = "path" + startFloor;
+        var hintCoords = points[p][points[p].length - 1];
+        console.log(hint, hintCoords);
+        hint.style({
+            opacity: 1,
+            left: (xScale(hintCoords.x) - 50) + "px",
+            top: (yScale(hintCoords.y)) + "px"
+        });
+        updateHint();
+        updateFloorPath();
+    }
+
 }
 var line = d3.svg.line()
     .x(function (d) {
@@ -260,24 +305,24 @@ var groupLabels = {
 var groupPathes = {
     "504_SE": {
         path: svg.append("path").classed("group_504_SE floor_0", true),
-        path2: svg.append("path").classed("group_504_SE floor_2", true),
-        path4: svg.append("path").classed("group_504_SE floor_4", true),
-        path5: svg.append("path").classed("group_504_SE floor_5", true)},
+        path2: svg.append("path").classed("group_504_SE", true),
+        path4: svg.append("path").classed("group_504_SE", true),
+        path5: svg.append("path").classed("group_504_SE", true)},
     "503_CS": {
         path: svg.append("path").classed("group_503_CS floor_0", true),
-        path2: svg.append("path").classed("group_503_CS floor_2", true),
-        path4: svg.append("path").classed("group_503_CS floor_4", true),
-        path5: svg.append("path").classed("group_503_CS floor_5", true)},
+        path2: svg.append("path").classed("group_503_CS", true),
+        path4: svg.append("path").classed("group_503_CS", true),
+        path5: svg.append("path").classed("group_503_CS", true)},
     "504_BI": {
         path: svg.append("path").classed("group_504_BI floor_0", true),
-        path2: svg.append("path").classed("group_504_BI floor_2", true),
-        path4: svg.append("path").classed("group_504_BI floor_4", true),
-        path5: svg.append("path").classed("group_504_BI floor_5", true)},
+        path2: svg.append("path").classed("group_504_BI", true),
+        path4: svg.append("path").classed("group_504_BI", true),
+        path5: svg.append("path").classed("group_504_BI", true)},
     "603_CS": {
-        path: svg.append("path").classed("group_603_SE floor_0", true),
-        path2: svg.append("path").classed("group_603_SE floor_2", true),
-        path4: svg.append("path").classed("group_603_SE floor_4", true),
-        path5: svg.append("path").classed("group_603_SE floor_5", true)}
+        path: svg.append("path").classed("group_603_CS floor_0", true),
+        path2: svg.append("path").classed("group_603_CS", true),
+        path4: svg.append("path").classed("group_603_CS", true),
+        path5: svg.append("path").classed("group_603_CS", true)}
 };
 var floorData = {
     "504_SE": {from: 2, to:2},
@@ -312,7 +357,6 @@ function drawPath(data, custom_path, group) {
         path5: data.path5.map(getPathPoints)
     };
     if (custom_path) {
-        console.log(fFrom, fTo, group, groupOffsets[group]);
         completePath(custom_path, data);
         floorData[group].from = fFrom;
         floorData[group].to = fTo;
@@ -398,6 +442,8 @@ function moveTable() {
             console.log("end1")
         })
 }
+var endings = {2:"nd",4:"th",5:"th"};
+
 function updateFloorPath(){
     d3.selectAll(".floor_" + global_floor + ":not(img)").style("opacity",1);
     d3.select(".button_floor_" + global_floor).classed("floor-active", true);
@@ -411,10 +457,32 @@ function updateFloorPath(){
             d3.select(".button_floor_" + floor).classed("floor-active", false);
             d3.selectAll(".floor_" + floor).style("opacity", 0);
         }
-    })
+    });
+
+
+}
+function updateHint() {
+    if (global_floor == startFloor) {
+        var arrow = (finishFloor > startFloor) ? "↑" : "↓";
+        hint.text("to " + finishFloor + endings[finishFloor] + " floor " + arrow)
+            .style("opacity", 0)
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+    } else if (global_floor == finishFloor) {
+        arrow = (finishFloor < startFloor) ? "↑" : "↓";
+        hint.text("to " + startFloor + endings[startFloor] + " floor " + arrow)
+            .style("opacity", 0)
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+    } else {
+        hint.style("opacity", 0)
+    }
 }
 function setFloor(floor) {
     global_floor = floor;
+    updateHint();
     updateFloorPath();
 }
 setFloor(2);
@@ -424,17 +492,36 @@ function drawLoggedUsers(data) {
     users.exit().remove();
 
     users.enter().append("circle")
-        .classed("users", true)
+        .attr("class", function(d) {
+            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+        })
         .attr("r", 5)
         .attr("fill", "#000");
+
     users
         .attr("cx", function(d){return xScale(d.x)})
         .attr("cy", function(d){return yScale(d.y)})
-}
 
+    var textUsers = svg.selectAll("text.users").data(data);
+    textUsers.exit().remove();
+
+    textUsers.enter().append("text")
+        .text(function(d){return d.name})
+        .attr("class", function(d) {
+            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+        })
+        .attr("fill", "#000");
+
+    textUsers
+        .attr("x", function(d){
+            var thisWidth = this.getBoundingClientRect().width;
+            return xScale(d.x) - thisWidth / 2})
+        .attr("y", function(d){return yScale(d.y) - 7})
+}
 setInterval(function(){
     getOnlineUsers()
-}, 60000);
+    updateFloorPath()
+}, 1000);
 getOnlineUsers();
 
 var bigK = d3.select("#K");
