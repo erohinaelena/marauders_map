@@ -178,11 +178,18 @@ def get_path(node1, node2):
 @app.route('/check_in/<node1>', methods=['GET', 'POST'])
 def check_in(node1):
     print ("User ", g.user.username, " wants to change location to ", node1)
-    users[g.user.username]['no_room'] = int(node1)
+    if RepresentsInt(node1):
+        users[g.user.username]['no_room'] = int(node1)
+        g.user.location = int(node1)
+    else:
+        users[g.user.username]['no_room'] = 777
+        g.user.location = 777
+
     new_hour = str(datetime.datetime.now().hour)
     new_minutes = str(datetime.datetime.now().minute)
     users[g.user.username]['hours'] = new_hour
     users[g.user.username]['minutes'] = new_minutes
+
     with open('app/users/' + g.user.username + '.txt', 'w') as cur_user:
         cur_user.write(str(g.user.username) + ' ' + str(g.user.group) + ' ' + str(
             g.user.location) + ' ' + g.user.hour + ' ' + g.user.minutes)
