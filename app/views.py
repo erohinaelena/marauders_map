@@ -10,7 +10,7 @@ from flask_login import LoginManager, \
 from flask_login import current_user
 from forms import LoginForm
 
-from models import User, AnonymousUser
+from models import User
 
 from app import app
 

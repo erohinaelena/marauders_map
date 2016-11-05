@@ -13,7 +13,6 @@ class User(UserMixin):
             info.write(str(username) + ' ' + str(group) + ' ' + str(location) + ' ' + self.hour + ' ' + self.minutes)
             info.close()
 
-
     def get_id(self):
         return self.username
 
@@ -21,7 +20,16 @@ class User(UserMixin):
         return True
 
     def is_active(self):
-        return True
+        from os import listdir
+        from os.path import isfile, join
+        onlyfiles = [('app/users/' + f) for f in listdir('app/users/') if isfile(join('app/users/', f))]
+        print onlyfiles
+        names = [x.split('/')[2] for x in onlyfiles]
+        print ('Current users\' names', names)
+        if self.username in names:
+            return True
+        else:
+            return False
 
     def is_anonymous(self):
         return False
