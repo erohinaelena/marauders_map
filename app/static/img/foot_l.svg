@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1980"
+   height="800"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r"
+   sodipodi:docname="foot_r.svg">
+  <defs
+     id="defs15" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview13"
+     showgrid="false"
+     inkscape:zoom="0.14090909"
+     inkscape:cx="990"
+     inkscape:cy="400"
+     inkscape:window-x="51"
+     inkscape:window-y="26"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <title
+     id="title4">Shoe Print</title>
+  <metadata
+     id="metadata7">image/svg+xmlShoe PrintTavin12. Sep. 2010<rdf:RDF>
+  <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+  </cc:Work>
+</rdf:RDF>
+</metadata>
+  <g
+     id="g7"
+     transform="matrix(1,0,0,-1,-5.27054e-5,799.6107)">
+    <title
+       id="title9">Layer 1</title>
+    <g
+       id="layer1">
+      <path
+         d="M 713.68524,785.5191 C 842.63495,829.92828 956.49652,858.24554 1120.0616,908.79132 1055.9304,1703.1847 305.14429,1386.4718 713.68524,785.5191 Z M 750.88013,641.37872 C 748.68402,531.00067 754.53595,424.61292 706.43481,319.68085 651.79401,207.16241 643.06195,108.46954 673.29034,-54.932369 728.27069,-352.13498 844.49567,-537.42718 1001.4576,-578.1142 c 334.8044,-48.48486 376.2751,277.67029 384.3907,516.24158 18.4819,133.516571 -95.2923,704.89807 -232.8786,801.68286 C 1017.7625,705.50348 885.01453,671.8432 750.88013,641.37872 l 0,0 z"
+         id="path2890-7"
+         transform="matrix(-0.00160919,-0.99999871,0.99999871,-0.00160919,591.75194,1390.8865)"
+         inkscape:connector-curvature="0"
+         style="fill:#000000" />
+    </g>
+  </g>
+</svg>

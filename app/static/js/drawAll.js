@@ -462,6 +462,10 @@ function updateFloorPath(){
 
 }
 function updateHint() {
+    if (startFloor == finishFloor) {
+        hint.style("opacity", 0);
+        return;
+    }
     if (global_floor == startFloor) {
         var arrow = (finishFloor > startFloor) ? "↑" : "↓";
         hint.text("to " + finishFloor + endings[finishFloor] + " floor " + arrow)
@@ -537,33 +541,98 @@ getOnlineUsers();
 
 var bigK = d3.select("#K");
 var pathK = svg.append("path").style("opacity", 0);
-console.log(Object.values(roomDict).filter(function(v){return v[0] == "5"}));
+var leftFoots = svg.append("g").classed("leftFoots", true);
+var rightFoots = svg.append("g").classed("rightFoots", true);
+
+function updateFoots() {
+    var step = 20;
+    var width = 20;
+    var footCount = pathK.node().getTotalLength() / step;
+    var footData = d3.range(0,footCount).map(function(d, i) {
+        return pathK.node().getPointAtLength(i * step);
+    });
+    var foots = leftFoots.selectAll("image").data(footData);
+    foots.exit().remove();
+    foots.enter().append("image")
+        .attr("xlink:href", "static/img/foot_r.svg")
+        .attr("width", width)
+        .attr("height", width);
+
+    leftFoots.selectAll("image")
+        .attr("x", function(d) {return d.x - width/2 - 4})
+        .attr("y", function(d) {return d.y - width/2 - 4})
+        .style("display", function(d,i) {return i%2 == 1 ? "block" : "none" })
+        .attr("transform", function(d, i) {
+            var angle = 0;
+            if (i) {
+                var prevPoint = footData[i - 1];
+                angle = Math.atan2(prevPoint.y - d.y, prevPoint.x - d.x) * 180 / Math.PI
+            }
+            return "rotate(" + angle + "," + d.x + "," + d.y + ")"
+        });
+
+    foots = rightFoots.selectAll("image").data(footData);
+    foots.exit().remove();
+    foots.enter().append("image")
+        .attr("xlink:href", "static/img/foot_l.svg")
+        .attr("width", width)
+        .attr("height", width)
+    rightFoots.selectAll("image")
+        .attr("x", function(d) {return d.x - width / 2 + 4})
+        .attr("y", function(d) {return d.y - width / 2 + 4})
+        .style("display", function(d,i) {return i%2 == 0 ? "block" : "none" })
+        .attr("transform", function(d, i) {
+            var angle = 0;
+            if (i) {
+                var prevPoint = footData[i - 1];
+                angle = Math.atan2(prevPoint.y - d.y, prevPoint.x - d.x) * 180 / Math.PI
+            }
+            return "rotate(" + angle + "," + d.x + "," + d.y + ")"
+        });
+}
 
 function draw5Path(data) {
     data = {
         path: data.path.map(function(d) {return data[d]})
     };
     pathK.attr("d", line(data.path));
+    updateFoots();
     var total = pathK.node().getTotalLength();
+    var dur = Math.floor(total * 10 +  Math.random() * 1000);
     d3.transition()
         .ease("linear")
-        .duration(1000 + Math.random() * 6000)
+        .duration(dur)
         .tween("rotate", function () { return function (t) {
             var coords = pathK.node().getPointAtLength(t * total);
-                bigK.style({
-                    top: coords.y + "px",
-                    left: coords.x + "px"
-                })
+            bigK.style({
+                top: coords.y + "px",
+                left: coords.x + "px"
+            });
+            [rightFoots, leftFoots].forEach(function(f){
+                f.selectAll("image")
+                    .attr("opacity", function(d,i) {
+                        if (i > t * total / 20) {
+                            return 0;
+                        } else return 1 / (t * total / 20 - i)
+                    })
+            })
+
             }
         })
-        .transition()
-        .each("end", function () {});
+        .each("end", function () {
+            [rightFoots, leftFoots].forEach(function(f){
+                f.selectAll("image")
+                    .transition()
+                    .duration(200)
+                    .attr("opacity", 0)
+            })
+        });
     //completeOnePath(data);
 
 }
-var startNode5 = Math.floor(Math.random() * nodes5.length);
+var startNode5 = 5066;
 function getRandomPath5() {
-    var next = Math.floor(Math.random() * nodes5.length);
+    var next = nodes5[Math.floor(Math.random() * nodes5.length)];
     if (startNode5 != next) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "graph/" + startNode5 + "/" + next + "", true);
