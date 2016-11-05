@@ -499,27 +499,33 @@ function drawLoggedUsers(data) {
         .attr("fill", "#000");
 
     users
+        .attr("class", function(d) {
+            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+        })
         .attr("cx", function(d){return xScale(d.x)})
-        .attr("cy", function(d){return yScale(d.y)})
+        .attr("cy", function(d){return yScale(d.y)});
 
     var textUsers = svg.selectAll("text.users").data(data);
     textUsers.exit().remove();
 
     textUsers.enter().append("text")
-        .text(function(d){return d.name})
         .attr("class", function(d) {
             return "users floor_" + getFloorFromId(roomDict[d.no_room])
         })
+        .text(function(d){return d.name})
         .attr("fill", "#000");
 
     textUsers
+        .attr("class", function(d) {
+            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+        })
         .attr("x", function(d){
             var thisWidth = this.getBoundingClientRect().width;
             return xScale(d.x) - thisWidth / 2})
         .attr("y", function(d){return yScale(d.y) - 7})
 }
 setInterval(function(){
-    getOnlineUsers()
+    getOnlineUsers();
     updateFloorPath()
 }, 1000);
 getOnlineUsers();
