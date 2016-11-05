@@ -9,7 +9,8 @@ from flask_login import LoginManager, \
     login_required, login_user, logout_user
 from flask_login import current_user
 from forms import LoginForm
-from models import User
+
+from models import User, AnonymousUser
 
 from app import app
 
@@ -28,10 +29,13 @@ login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(id):
-    with open('app/users/' + id + '.txt', 'r') as user:
-        for line in user:
-            params = line.split()
-            return User(params[0], params[1], params[2])
+    try:
+        with open('app/users/' + id + '.txt', 'r') as user:
+            for line in user:
+                params = line.split()
+                return User(params[0], params[1], params[2])
+    except IOError:
+        return login_manager.anonymous_user
 
 
 def load_users():
@@ -90,6 +94,10 @@ def login():
 @app.route('/index')
 @login_required
 def index():
+    print ("CURRENT USER IS ", current_user)
+    if current_user == login_manager.anonymous_user:
+        print ("YES")
+        return redirect(url_for('logout'))
     return render_template("base.html",
                            title='Home')
 
@@ -98,8 +106,10 @@ def index():
 @app.route("/logout")
 @login_required
 def logout():
-    print g.user.username
-    os.remove('app/users/' + g.user.username + '.txt')
+    if current_user != login_manager.anonymous_user:
+        print g.user.username
+        os.remove('app/users/' + g.user.username + '.txt')
+
     logout_user()
     return redirect(url_for("login"))
 
