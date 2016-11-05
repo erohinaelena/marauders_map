@@ -32,16 +32,63 @@ body {
 svg, img, #start_label, #finish_label {
     position: absolute;
 }
-.button_floor_2, .button_floor_4, .button_floor_2 {
+#start_label, #finish_label, .hint {
+    opacity: 0;
+}
+svg {
+    min-height: 250px;
+}
+.clock {
+    margin: 0;
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    left:650px;
+    top:-50px;
+}
 
+#start_label, #finish_label {
+    opacity:0;
 }
 .group_label {
     position: absolute;
 }
-.label, .group_label {
-    background: rgba(155,80,0,0.7);
-    padding: 2px;
+#AM {
+    width: 56px;
+    height: 30px;
+    animation: moving 10s infinite;
+}
+#K {
+    width: 56px;
+    height: 30px;
+    left: 193px;
+    top: 300px;
+}
+@keyframes moving {
+    0% {
+        left: 193px;
+        top: 516px;
+    }
+    50% {
+        left: 234px;
+        top: 559px;
+    }
+    100% {
+        left: 193px;
+        top: 516px;
+    }
+}
+.label {
+    background: #924b00;
     border-radius: 5px;
+    paddong: 2px;
+}
+.group_label {
+    background: url(../img/ribbon.png);
+    background-size: cover;
+    padding: 14px 12px 25px 15px;
+    border-radius: 5px;
+    margin-left: -20px;
 }
 
 img {
@@ -65,8 +112,8 @@ path:hover {
 }
 
 .right_block {
-    float: left;
-    margin-left: 430px;
+    float: right;
+    margin-right: 50px;
 }
 
 .header_block {
@@ -74,14 +121,7 @@ path:hover {
     font-size: 22px;
 }
 
-/*@keyframes dasharray {
-    0% {
-        stroke-dasharray:  0 1000;
-    }
-    100% {
-        stroke-dasharray: 1000 0;
-    }
-}*/
+
 
 button:active {
     background: url(../img/wood_button_pull.jpg);

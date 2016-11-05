@@ -15,20 +15,26 @@
 </div>
 
 <div id="map">
+
     <div class="floor_header">Floor 2</div>
 
     <img class="floor_2" src="static/img/2.png"/>
     <img class="floor_4" src="static/img/4.png"/>
     <img class="floor_5" src="static/img/5.png"/>
 
-    <svg>
-    </svg>
+    <svg id="mapSvg"></svg>
+    <div class="clock"></div>
     <div id="start_label" class="label">text1</div>
     <div id="finish_label" class="label">text2</div>
-    <div id="group_504_SE" class="group_label">504_SE!</div>
-    <div id="group_503_CS" class="group_label">503_CS!</div>
-    <div id="group_504_BI" class="group_label">504_BI!</div>
-    <div id="group_603_CS" class="group_label">603_CS!</div>
+    <div class="hint">hint</div>
+
+    <div id="AM" class="group_label floor_4">AM</div>
+    <div id="K" class="group_label floor_5">K</div>
+
+    <div id="group_504_SE" class="group_label">504_SE&nbsp;</div>
+    <div id="group_503_CS" class="group_label">503_CS&nbsp;</div>
+    <div id="group_504_BI" class="group_label">504_BI&nbsp;</div>
+    <div id="group_603_CS" class="group_label">603_CS&nbsp;</div>
 
 </div>
 
@@ -82,7 +88,7 @@
         <br>
         <br>
         <span>From</span><input class="from" id="from2" type="text" size="5"/>
-        <button onclick="updateFromNode(document.getElementById('from2').value);">Find!</button>
+        <button onclick="updateFromNode(document.getElementById('from2').value);">Change!</button>
     </span>
 
     <!-- Построить путь в комнату отдыха -->
@@ -143,7 +149,7 @@
         }
     }
 
-    function getData(node1, node2, path) {
+    function getData(node1, node2, path, group) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "graph/" + node1 + "/" + node2 + "", true);
         xhr.send();
@@ -155,10 +161,10 @@
 
             } else {
                 //console.log("is path");
-                drawPath(JSON.parse(xhr.responseText), path);
+                drawPath(JSON.parse(xhr.responseText), path, group);
                 var fFrom = getFloorFromId(node1);
                 var fTo = getFloorFromId(node2);
-                moveTable(fFrom, fTo)
+                //moveTableGroup(fFrom, fTo, group)
             }
         }
     }
@@ -222,12 +228,14 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
             console.log("who is online", JSON.parse(xhr.responseText));
-            drawPath(JSON.parse(xhr.responseText));
+            drawLoggedUsers(JSON.parse(xhr.responseText));
         }
     }
     //document.onload = whoAmI();
 </script>
+<script src="static/js/clock.js"></script>
 <script src="static/js/drawAll.js"></script>
+
 
 </body>
 
