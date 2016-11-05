@@ -435,7 +435,6 @@ function moveTable() {
                     .duration(3000)
                     .tween("rotate", function () {
                         return function (t) { moveToPath(t,"to",data) } })
-                    .transition()
                     .each("end", function () {
                         console.log("end2")
                     });
@@ -576,7 +575,7 @@ function updateFoots() {
     foots.enter().append("image")
         .attr("xlink:href", "static/img/foot_l.svg")
         .attr("width", width)
-        .attr("height", width)
+        .attr("height", width);
     rightFoots.selectAll("image")
         .attr("x", function(d) {return d.x - width / 2 + 4})
         .attr("y", function(d) {return d.y - width / 2 + 4})
@@ -645,6 +644,15 @@ function getRandomPath5() {
     }
 
 }
+
+function updateJoke() {
+    var i = Math.floor(r_text.length * Math.random());
+    d3.select(".jokes").text(r_text[i]);
+}
+updateJoke();
+setInterval(updateJoke, 60000);
+
+
 
 
 

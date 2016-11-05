@@ -67,6 +67,16 @@ svg {
     left: 208px;
     top: 311px;
 }
+
+.jokes {
+    float: left;
+    width: 650px;
+    padding-left: 60px;
+    margin-right: 500px;
+    font-size: 25px;
+    text-align: center;
+    margin-top: -28px;
+}
 @keyframes moving {
     0% {
         left: 193px;
@@ -127,7 +137,7 @@ path:hover {
 }
 
 .header_block {
-    padding-left: 275px;
+    padding-left: 260px;
     font-size: 22px;
 }
 
