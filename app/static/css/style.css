@@ -53,7 +53,7 @@ svg {
 #start_label, #finish_label {
     opacity:0;
 }
-.group_label {
+.group_label, .deadline {
     position: absolute;
 }
 #AM {
@@ -62,10 +62,19 @@ svg {
     animation: moving 10s infinite;
 }
 #K {
-    width: 56px;
-    height: 30px;
+    border-radius: 5px;
+    margin-left: -25px;
+    margin-top: -25px;
+    width: 52px;
+    height: 49px;
     left: 208px;
     top: 311px;
+}
+
+.deadline_background {
+    background: url(../img/Ghost.png);
+    background-size: cover;
+    height: 100%;
 }
 
 .jokes {
