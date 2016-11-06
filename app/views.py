@@ -82,9 +82,7 @@ def login():
         user = User(form.username.data, form.group.data, location)
         users[form.username.data] = {'name': user.username, 'no_room': user.location, 'group': user.group,
                                      'hours': user.hour, 'minutes': user.minutes}
-        print (users[user.username])
         login_user(user)
-        print g.user
         return redirect(url_for("index"))
     return render_template('login.html', form=form)
 
@@ -96,7 +94,7 @@ def login():
 def index():
     print ("CURRENT USER IS ", current_user)
     if current_user == login_manager.anonymous_user:
-        print ("YES")
+        print ("ANON CATCHED, LOGGING HIM OUT...")
         return redirect(url_for('logout'))
     return render_template("base.html",
                            title='Home')
@@ -146,7 +144,7 @@ def who_is_online():
     for u in users.keys():
         user_room_id = rooms_map[users[u]['no_room']]
         response.append({'name': u, 'x': G.node[user_room_id]['x'] + randint(-20, 20),
-                         'y': G.node[user_room_id]['y'] + randint(-20, 20), 'no_room': users[u]['no_room']})
+                         'y': G.node[user_room_id]['y'] + randint(-20, 20), 'no_room': users[u]['no_room'], 'node_id': user_room_id})
     return json.dumps(response)
 
 
