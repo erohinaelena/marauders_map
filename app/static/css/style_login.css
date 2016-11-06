@@ -35,9 +35,11 @@ input {
     border-radius: 5px;
     position: static;
     background: #EEE8AA;
+    margin-top: 10px;
 }
 
 button{
+    font-family: 'MountainsofChristmas-Regular', Fantasy;
     background: url(../img/wood_button_push.jpg);
     border-color: #997300;
     border-radius: 5px;
