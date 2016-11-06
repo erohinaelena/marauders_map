@@ -34,7 +34,7 @@ var startDiv = container.select("#start_label");
 var finishDiv = container.select("#finish_label");
 var hint = container.select(".hint");
 
-svg.attr("width", width + "px");
+svg.attr("width", (width + 200) + "px");
 svg.attr("height", height + "px");
 
 var isEvenClick = true;
@@ -230,33 +230,35 @@ var finishFloor;
 function updateLabels(points) {
     var startPoint = points.path[0];
     var finishPoint = points.path[points.path.length - 1];
-    startFloor = getFloorFromId(roomDict[startPoint.no_room]) || global_floor;
-    finishFloor = getFloorFromId(roomDict[finishPoint.no_room]) || global_floor;
+    startFloor = getFloorFromId(startPoint.id);
+    finishFloor = getFloorFromId(finishPoint.id);
     [startDiv, finishDiv].forEach(function(block) {
         [2,4,5].forEach(function(floor) {
             block.classed("floor_" + floor, false)
         })
     });
+    console.log(startPoint.no_room*1, finishPoint.no_room*1, "noroom");
     startDiv
         .text(startPoint.no_room)
         .classed("floor_" + startFloor, true)
         .style({
-            opacity: (global_floor == startFloor && startPoint.no_room*1)*1 ,
+            display: startPoint.no_room*1? "block":"none",
             left: (xScale(startPoint.x)) + "px",
             top: (yScale(startPoint.y)) + "px"
         });
+    //console.log(global_floor == finishFloor && finishPoint.no_room*1, finishPoint.no_room)
     finishDiv
         .text(finishPoint.no_room)
         .classed("floor_" + finishFloor, true)
         .style({
-            opacity: (global_floor == finishFloor && finishPoint.no_room*1)*1,
+            display: finishPoint.no_room*1? "block":"none",
             left: (xScale(finishPoint.x)) + "px",
             top: (yScale(finishPoint.y)) + "px"
         });
     if (startFloor != finishFloor) {
         var p = "path" + startFloor;
         var hintCoords = points[p][points[p].length - 1];
-        console.log(hint, hintCoords);
+        console.log(hint, hintCoords, "hint", startFloor, finishFloor);
         hint.style({
             opacity: 1,
             left: (xScale(hintCoords.x) - 50) + "px",
@@ -348,6 +350,7 @@ function drawPath(data, custom_path, group) {
             data[d].y += groupOffsets[group].y;
             return data[d]
         }
+        data[d].id = d;
         return data[d]
     }
     data = {
@@ -610,6 +613,7 @@ function draw5Path(data) {
             [rightFoots, leftFoots].forEach(function(f){
                 f.selectAll("image")
                     .attr("opacity", function(d,i) {
+                        if (global_floor!=5) return 0;
                         if (i > t * total / 20) {
                             return 0;
                         } else return 1 / (t * total / 20 - i)

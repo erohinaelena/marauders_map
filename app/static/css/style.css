@@ -102,6 +102,7 @@ svg {
     background: #eaaa67;
     border-radius: 5px;
     padding: 2px 10px;
+    min-width: 78px;
 }
 .group_label {
     background: url(../img/ribbon.png);

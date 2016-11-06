@@ -15,58 +15,47 @@ var r = Math.min(w, h)/2;
 var drag = d3.behavior.drag()
     .on('drag', dragMov);
 
-var time = {hour:"", minute:""};
+var date = new Date;
+var outerTime = {hour: date.getHours(), minute: date.getMinutes()};
+
+var starth = outerTime.hour - 3 < 0 ? outerTime.hour + 21 : outerTime.hour - 3;
+var startm = outerTime.minute - 15 < 0 ? outerTime.minute + 45 : outerTime.minute - 15;
+
+var time = {hour:starth, minute:startm};
 
 function dragMov() {
     var mouse = Math.atan2(d3.event.y, d3.event.x);
-    var deg = mouse / (Math.PI/ 180) + 90;
+    var deg = mouse / (Math.PI/ 180);
     deg = deg < 0 ? deg + 360 : deg;
     var which = d3.select(this).attr('class');
+    if (which == "minute") {
+        var dm = time["minute"] - deg/6;
+        time["minute"] = deg / 6;
+        if (dm > 50) {
+            time["hour"]++;
+        } else if (dm < -50) {
+            time["hour"]--;
+        }
+    } else {
+        //console.log(which, Math.floor(deg / 30));
+        time["minute"] = (deg % 30)/30 * 60;
+        var dh = time["hour"] - deg/30;
+        time["hour"] = Math.floor(deg / 30);
+        if (dh > 10) {
+            time["hour"] = Math.floor(deg / 30) + 12;
+        } else if (time["hour"] > 12) {
+            time["hour"] = Math.floor(deg / 30) + 12;
+        }
+        if (time["hour"] > 24) {
+            time["hour"] -= 24;
+        }
+    }
     //console.log(minuteScale(mouse))
     delta[which] = mouse;
     last[which] = new Date();
-    time[which] = which == "minute" ? deg / 6 : deg / 30;
-    // move slider element
-    d3.select(this).select('.slider-background').attr({
-        cx: function(d) { return d.ringR * Math.cos(mouse) },
-        cy: function(d) { return d.ringR * Math.sin(mouse); }
-    });
-    d3.select(this).select('.slider').attr({
-        cx: function(d) { return d.ringR * Math.cos(mouse) },
-        cy: function(d) { return d.ringR * Math.sin(mouse); }
-    });
-    d3.select(this).select('.content').attr({
-        x: function(d) { return d.ringR * Math.cos(mouse) },
-        y: function(d) { return d.ringR * Math.sin(mouse) + 5.5; }
-    });
+    //time[which] = which == "minute" ? deg / 6 : deg / 30;
+    moveArrows(time);
 
-    // move hand element
-    d3.select('line.' + which )
-        .attr({
-            x2: function(d) { return d.length * Math.cos(mouse); },
-            y2: function(d) { return d.length * Math.sin(mouse); },
-        });
-    if (which == 'minute') {
-        d3.select('slider.'+'hour').select('.slider-background').attr({
-            cx: function(d) { return d.ringR * Math.cos(mouse) },
-            cy: function(d) { return d.ringR * Math.sin(mouse); }
-        });
-        d3.select('slider.'+'hour').select('.slider').attr({
-            cx: function(d) { return d.ringR * Math.cos(mouse) },
-            cy: function(d) { return d.ringR * Math.sin(mouse); }
-        });
-        d3.select('slider.'+'hour').select('.content').attr({
-            x: function(d) { return d.ringR * Math.cos(mouse) },
-            y: function(d) { return d.ringR * Math.sin(mouse) + 5.5; }
-        });
-
-        // move hand element
-        d3.select('line.' + which)
-            .attr({
-                x2: function(d) { return d.length * Math.cos(mouse); },
-                y2: function(d) { return d.length * Math.sin(mouse); },
-            });
-    }
 }
 
 var clock = {
@@ -249,38 +238,41 @@ sliderGroup.append('text')
         }
     });
 
+function moveArrows(time) {
+    outerTime.hour = time.hour + 3 >= 24 ? time.hour - 21 : time.hour + 3;
+    outerTime.minute = time.minute + 15 >= 60 ? time.minute - 45 : time.minute + 15;
 
-function moveHand(witch)
-{
-    var mouse = delta[witch] - (last[witch] - new Date()) / den[witch];//Math.atan2(d3.event.y, d3.event.x);
-    console.log(mouse)
-    //mouse = mouse % Math.PI;
-    var deg = mouse % Math.PI / (Math.PI/ 180) + 90;
-    deg = deg < 0 ? deg + 360 : deg;
-
-    time[witch] = witch == "minute" ? deg / 6 : deg / 30;
+    var minutes = time.minute;
+    var hours = time.hour + minutes/60;
+    var angle = {minute: minutes/60 * 2 * Math.PI, hour: hours/12 * 2 * Math.PI};
+    console.log(outerTime);
     // move slider element
-    d3.select('g.' + witch).select('.slider-background').attr({
-        cx: function(d) { return d.ringR * Math.cos(mouse) },
-        cy: function(d) { return d.ringR * Math.sin(mouse); }
-    });
-    d3.select('g.' + witch).select('.slider').attr({
-        cx: function(d) { return d.ringR * Math.cos(mouse) },
-        cy: function(d) { return d.ringR * Math.sin(mouse); }
-    });
-    d3.select('g.' + witch).select('.content').attr({
-        x: function(d) { return d.ringR * Math.cos(mouse) },
-        y: function(d) { return d.ringR * Math.sin(mouse) + 5.5; }
-    });
-
-    // move hand element
-    d3.select('line.' + witch)
-        .attr({
-            x2: function(d) { return d.length * Math.cos(mouse); },
-            y2: function(d) { return d.length * Math.sin(mouse); }
+    ["minute", "hour"].forEach(function(witch) {
+        var mouse = angle[witch];
+        d3.select('g.' + witch).select('.slider-background').attr({
+            cx: function(d) { return d.ringR * Math.cos(mouse); },
+            cy: function(d) { return d.ringR * Math.sin(mouse); }
         });
+        d3.select('g.' + witch).select('.slider').attr({
+            cx: function(d) { return d.ringR * Math.cos(mouse) },
+            cy: function(d) { return d.ringR * Math.sin(mouse); }
+        });
+        d3.select('g.' + witch).select('.content').attr({
+            x: function(d) { return d.ringR * Math.cos(mouse) },
+            y: function(d) { return d.ringR * Math.sin(mouse) + 5.5; }
+        });
+
+        // move hand element
+        d3.select('line.' + witch)
+            .attr({
+                x2: function(d) { return d.length * Math.cos(mouse); },
+                y2: function(d) { return d.length * Math.sin(mouse); }
+            });
+    })
+
 }
 
+moveArrows(time);
 setInterval(function(){
     //moveHand('minute');
     //moveHand('hour');
