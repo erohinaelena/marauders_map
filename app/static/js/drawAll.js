@@ -95,12 +95,12 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
             })
 
         });
-        setInterval(function(){
+        setInterval(function () {
             //console.log(mouse);
             //updateGroupBySchedule(data, xmlData);
         }, 1000);
         updateGroupBySchedule(data, xmlData);
-        document.onkeydown = function(e) {
+        document.onkeydown = function (e) {
             console.log(e);
             if (e.keyCode == 39) {
                 var prevHours = customTime.getHours();
@@ -123,7 +123,7 @@ d3.xml("static/data/testdata.xml", function (xmlData) {
                 customTime.setMinutes(prevMinutes);
                 updateGroupBySchedule(data, xmlData);
 
-            }else if (e.keyCode == 38) {
+            } else if (e.keyCode == 38) {
                 prevMinutes = customTime.getMinutes();
                 prevMinutes++;
                 prevMinutes = prevMinutes > 59 ? 0 : prevMinutes;
@@ -174,7 +174,7 @@ function updateGroupBySchedule(data, xmlData) {
                 if (!node1 || !node2) {
                     console.log(item.Aud_from, item.Aud_to, node1, node2, group);
                 } else {
-                    console.log("move!",item.Aud_from, item.Aud_to, group);
+                    console.log("move!", item.Aud_from, item.Aud_to, group);
                     getData(node1, node2, groupPathes[group], group);
                 }
             }
@@ -232,17 +232,17 @@ function updateLabels(points) {
     var finishPoint = points.path[points.path.length - 1];
     startFloor = getFloorFromId(startPoint.id);
     finishFloor = getFloorFromId(finishPoint.id);
-    [startDiv, finishDiv].forEach(function(block) {
-        [2,4,5].forEach(function(floor) {
+    [startDiv, finishDiv].forEach(function (block) {
+        [2, 4, 5].forEach(function (floor) {
             block.classed("floor_" + floor, false)
         })
     });
-    console.log(startPoint.no_room*1, finishPoint.no_room*1, "noroom");
+    console.log(startPoint.no_room * 1, finishPoint.no_room * 1, "noroom");
     startDiv
         .text(startPoint.no_room)
         .classed("floor_" + startFloor, true)
         .style({
-            display: startPoint.no_room*1? "block":"none",
+            display: startPoint.no_room * 1 ? "block" : "none",
             left: (xScale(startPoint.x)) + "px",
             top: (yScale(startPoint.y)) + "px"
         });
@@ -251,7 +251,7 @@ function updateLabels(points) {
         .text(finishPoint.no_room)
         .classed("floor_" + finishFloor, true)
         .style({
-            display: finishPoint.no_room*1? "block":"none",
+            display: finishPoint.no_room * 1 ? "block" : "none",
             left: (xScale(finishPoint.x)) + "px",
             top: (yScale(finishPoint.y)) + "px"
         });
@@ -279,7 +279,7 @@ var line = d3.svg.line()
 
 function completePath(path, data) {
     if (!data) return;
-    Object.keys(path).forEach(function(key) {
+    Object.keys(path).forEach(function (key) {
         path[key].attr("d", line(data[key]));
         path[key].attr("opacity", 0)
             .transition()
@@ -288,7 +288,7 @@ function completePath(path, data) {
     })
 }
 function completeOnePath(data) {
-    Object.keys(commonPath).forEach(function(key) {
+    Object.keys(commonPath).forEach(function (key) {
         commonPath[key].attr("d", line(data[key]));
         commonPath[key].attr("opacity", 0)
             .transition()
@@ -309,28 +309,32 @@ var groupPathes = {
         path: svg.append("path").classed("group_504_SE floor_0", true),
         path2: svg.append("path").classed("group_504_SE", true),
         path4: svg.append("path").classed("group_504_SE", true),
-        path5: svg.append("path").classed("group_504_SE", true)},
+        path5: svg.append("path").classed("group_504_SE", true)
+    },
     "503_CS": {
         path: svg.append("path").classed("group_503_CS floor_0", true),
         path2: svg.append("path").classed("group_503_CS", true),
         path4: svg.append("path").classed("group_503_CS", true),
-        path5: svg.append("path").classed("group_503_CS", true)},
+        path5: svg.append("path").classed("group_503_CS", true)
+    },
     "504_BI": {
         path: svg.append("path").classed("group_504_BI floor_0", true),
         path2: svg.append("path").classed("group_504_BI", true),
         path4: svg.append("path").classed("group_504_BI", true),
-        path5: svg.append("path").classed("group_504_BI", true)},
+        path5: svg.append("path").classed("group_504_BI", true)
+    },
     "603_CS": {
         path: svg.append("path").classed("group_603_CS floor_0", true),
         path2: svg.append("path").classed("group_603_CS", true),
         path4: svg.append("path").classed("group_603_CS", true),
-        path5: svg.append("path").classed("group_603_CS", true)}
+        path5: svg.append("path").classed("group_603_CS", true)
+    }
 };
 var floorData = {
-    "504_SE": {from: 2, to:2},
-    "503_CS": {from: 2, to:2},
-    "504_BI": {from: 2, to:2},
-    "603_CS": {from: 2, to:2}
+    "504_SE": {from: 2, to: 2},
+    "503_CS": {from: 2, to: 2},
+    "504_BI": {from: 2, to: 2},
+    "603_CS": {from: 2, to: 2}
 };
 
 var groupOffsets = {
@@ -344,7 +348,7 @@ function drawPath(data, custom_path, group) {
     var fFrom = getFloorFromId(data.path[0]);
     var fTo = getFloorFromId(data.path[data.path.length - 1]);
 
-    function getPathPoints(d,i) {
+    function getPathPoints(d, i) {
         if ((i == 0 || i == data.path.length - 1) && custom_path) {
             data[d].x += groupOffsets[group].x;
             data[d].y += groupOffsets[group].y;
@@ -353,6 +357,7 @@ function drawPath(data, custom_path, group) {
         data[d].id = d;
         return data[d]
     }
+
     data = {
         path: data.path.map(getPathPoints),
         path2: data.path2.map(getPathPoints),
@@ -373,16 +378,17 @@ function drawPath(data, custom_path, group) {
 }
 
 function updateGroupLabelsFloor(field) {
-    [2,4,5].forEach(function(f){Object.keys(groupLabels).forEach(function(label){
-        groupLabels[label].classed("floor_" + f, false);
-    })
+    [2, 4, 5].forEach(function (f) {
+        Object.keys(groupLabels).forEach(function (label) {
+            groupLabels[label].classed("floor_" + f, false);
+        })
     });
-    Object.keys(groupLabels).forEach(function(label){
+    Object.keys(groupLabels).forEach(function (label) {
         groupLabels[label].classed("floor_" + floorData[label][field], true);
     });
 }
 
-function moveToPath(t,field,data) {
+function moveToPath(t, field, data) {
 
     Object.keys(data).forEach(function (key) {
         if (field == "to" && floorData[key].from == floorData[key].to) return;
@@ -390,7 +396,7 @@ function moveToPath(t,field,data) {
         var currentPath = "path" + floorData[key][field];
         var curGr = groupLabels[key];
         var delay = groupOffsets[key].delay;
-        var percent = (field == "from")? Math.max(0, t-delay) : (t < delay)? 0 : (t - delay)/(1 - delay);
+        var percent = (field == "from") ? Math.max(0, t - delay) : (t < delay) ? 0 : (t - delay) / (1 - delay);
         var coords = gr[currentPath].path.getPointAtLength(percent * gr[currentPath].total);
         if (gr[currentPath].total) {
             curGr.style({
@@ -405,10 +411,10 @@ function moveTable() {
     var groups = Object.keys(groupPathes);
     var data = {};
     var maxLength = 0;
-    groups.forEach(function(d) {
+    groups.forEach(function (d) {
         var pathes = Object.keys(groupPathes[d]);
         data[d] = {};
-        pathes.forEach(function(floor_path){
+        pathes.forEach(function (floor_path) {
             var p = groupPathes[d][floor_path].node();
             var l = p.getTotalLength();
             if (l > maxLength) {
@@ -428,33 +434,40 @@ function moveTable() {
     d3.transition()
         .ease("linear")
         .duration(3000)
-        .tween("rotate", function () { return function (t) { moveToPath(t,"from",data) } })
+        .tween("rotate", function () {
+            return function (t) {
+                moveToPath(t, "from", data)
+            }
+        })
         .transition()
         .each("end", function () {
-                updateGroupLabelsFloor("to");
-                updateFloorPath();
-                d3.transition()
-                    .ease("linear")
-                    .duration(3000)
-                    .tween("rotate", function () {
-                        return function (t) { moveToPath(t,"to",data) } })
-                    .each("end", function () {
-                        console.log("end2")
-                    });
+            updateGroupLabelsFloor("to");
+            updateFloorPath();
+            d3.transition()
+                .ease("linear")
+                .duration(3000)
+                .tween("rotate", function () {
+                    return function (t) {
+                        moveToPath(t, "to", data)
+                    }
+                })
+                .each("end", function () {
+                    console.log("end2")
+                });
             console.log("end1")
         })
 }
-var endings = {2:"nd",4:"th",5:"th"};
+var endings = {2: "nd", 4: "th", 5: "th"};
 
-function updateFloorPath(){
-    d3.selectAll(".floor_" + global_floor + ":not(img)").style("opacity",1);
+function updateFloorPath() {
+    d3.selectAll(".floor_" + global_floor + ":not(img)").style("opacity", 1);
     d3.select(".button_floor_" + global_floor).classed("floor-active", true);
     d3.select("img.floor_" + global_floor)
         .transition()
         .duration(200)
         .style("opacity", 1);
     d3.select(".floor_header").text("Floor " + global_floor);
-    [2,4,5].forEach(function(floor) {
+    [2, 4, 5].forEach(function (floor) {
         if (floor != global_floor) {
             d3.select(".button_floor_" + floor).classed("floor-active", false);
             d3.selectAll(".floor_" + floor).style("opacity", 0);
@@ -498,43 +511,52 @@ function drawLoggedUsers(data) {
     users.exit().remove();
 
     users.enter().append("circle")
-        .attr("class", function(d) {
+        .attr("class", function (d) {
             return "users floor_" + getFloorFromId(roomDict[d.no_room])
         })
         .attr("r", 5)
         .attr("fill", "#000");
 
     users
-        .attr("class", function(d) {
+        .attr("class", function (d) {
             return "users floor_" + getFloorFromId(roomDict[d.no_room])
         })
-        .attr("cx", function(d){return xScale(d.x)})
-        .attr("cy", function(d){return yScale(d.y)});
+        .attr("cx", function (d) {
+            return xScale(d.x)
+        })
+        .attr("cy", function (d) {
+            return yScale(d.y)
+        });
 
     var textUsers = svg.selectAll("text.users").data(data);
     textUsers.exit().remove();
 
     textUsers.enter().append("text")
-        .attr("class", function(d) {
+        .attr("class", function (d) {
             return "users floor_" + getFloorFromId(roomDict[d.no_room])
         })
-        .text(function(d){return d.name})
+        .text(function (d) {
+            return d.name
+        })
         .attr("fill", "#000");
 
     textUsers
-        .attr("class", function(d) {
+        .attr("class", function (d) {
             return "users floor_" + getFloorFromId(roomDict[d.no_room])
         })
-        .attr("x", function(d){
+        .attr("x", function (d) {
             var thisWidth = this.getBoundingClientRect().width;
-            return xScale(d.x) - thisWidth / 2})
-        .attr("y", function(d){return yScale(d.y) - 7})
+            return xScale(d.x) - thisWidth / 2
+        })
+        .attr("y", function (d) {
+            return yScale(d.y) - 7
+        })
 }
-setInterval(function(){
+setInterval(function () {
     getOnlineUsers();
     updateFloorPath();
 }, 1000);
-setInterval(function(){
+setInterval(function () {
     //getOnlineUsers();
     //updateFloorPath()
     getRandomPath5();
@@ -550,7 +572,7 @@ function updateFoots() {
     var step = 20;
     var width = 20;
     var footCount = pathK.node().getTotalLength() / step;
-    var footData = d3.range(0,footCount).map(function(d, i) {
+    var footData = d3.range(0, footCount).map(function (d, i) {
         return pathK.node().getPointAtLength(i * step);
     });
     var foots = leftFoots.selectAll("image").data(footData);
@@ -561,10 +583,16 @@ function updateFoots() {
         .attr("height", width);
 
     leftFoots.selectAll("image")
-        .attr("x", function(d) {return d.x - width/2 - 4})
-        .attr("y", function(d) {return d.y - width/2 - 4})
-        .style("display", function(d,i) {return i%2 == 1 ? "block" : "none" })
-        .attr("transform", function(d, i) {
+        .attr("x", function (d) {
+            return d.x - width / 2 - 4
+        })
+        .attr("y", function (d) {
+            return d.y - width / 2 - 4
+        })
+        .style("display", function (d, i) {
+            return i % 2 == 1 ? "block" : "none"
+        })
+        .attr("transform", function (d, i) {
             var angle = 0;
             if (i) {
                 var prevPoint = footData[i - 1];
@@ -580,10 +608,16 @@ function updateFoots() {
         .attr("width", width)
         .attr("height", width);
     rightFoots.selectAll("image")
-        .attr("x", function(d) {return d.x - width / 2 + 4})
-        .attr("y", function(d) {return d.y - width / 2 + 4})
-        .style("display", function(d,i) {return i%2 == 0 ? "block" : "none" })
-        .attr("transform", function(d, i) {
+        .attr("x", function (d) {
+            return d.x - width / 2 + 4
+        })
+        .attr("y", function (d) {
+            return d.y - width / 2 + 4
+        })
+        .style("display", function (d, i) {
+            return i % 2 == 0 ? "block" : "none"
+        })
+        .attr("transform", function (d, i) {
             var angle = 0;
             if (i) {
                 var prevPoint = footData[i - 1];
@@ -595,35 +629,38 @@ function updateFoots() {
 
 function draw5Path(data) {
     data = {
-        path: data.path.map(function(d) {return data[d]})
+        path: data.path.map(function (d) {
+            return data[d]
+        })
     };
     pathK.attr("d", line(data.path));
     updateFoots();
     var total = pathK.node().getTotalLength();
-    var dur = Math.floor(total * 10 +  Math.random() * 1000);
+    var dur = Math.floor(total * 10 + Math.random() * 1000);
     d3.transition()
         .ease("linear")
         .duration(dur)
-        .tween("rotate", function () { return function (t) {
-            var coords = pathK.node().getPointAtLength(t * total);
-            bigK.style({
-                top: coords.y + "px",
-                left: coords.x + "px"
-            });
-            [rightFoots, leftFoots].forEach(function(f){
-                f.selectAll("image")
-                    .attr("opacity", function(d,i) {
-                        if (global_floor!=5) return 0;
-                        if (i > t * total / 20) {
-                            return 0;
-                        } else return 1 / (t * total / 20 - i)
-                    })
-            })
+        .tween("rotate", function () {
+            return function (t) {
+                var coords = pathK.node().getPointAtLength(t * total);
+                bigK.style({
+                    top: coords.y + "px",
+                    left: coords.x + "px"
+                });
+                [rightFoots, leftFoots].forEach(function (f) {
+                    f.selectAll("image")
+                        .attr("opacity", function (d, i) {
+                            if (global_floor != 5) return 0;
+                            if (i > t * total / 20) {
+                                return 0;
+                            } else return 1 / (t * total / 20 - i)
+                        })
+                })
 
             }
         })
         .each("end", function () {
-            [rightFoots, leftFoots].forEach(function(f){
+            [rightFoots, leftFoots].forEach(function (f) {
                 f.selectAll("image")
                     .transition()
                     .duration(200)
@@ -657,6 +694,10 @@ updateJoke();
 setInterval(updateJoke, 60000);
 
 
+var geoSuccess = function (position) {
+    console.log(position);
+};
+navigator.geolocation.getCurrentPosition(geoSuccess);
 
 
 
