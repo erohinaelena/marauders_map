@@ -512,14 +512,14 @@ function drawLoggedUsers(data) {
 
     users.enter().append("circle")
         .attr("class", function (d) {
-            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+            return "users floor_" + getFloorFromId(d.node_id)
         })
         .attr("r", 5)
         .attr("fill", "#000");
 
     users
         .attr("class", function (d) {
-            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+            return "users floor_" + getFloorFromId(d.node_id)
         })
         .attr("cx", function (d) {
             return xScale(d.x)
@@ -533,7 +533,7 @@ function drawLoggedUsers(data) {
 
     textUsers.enter().append("text")
         .attr("class", function (d) {
-            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+            return "users floor_" + getFloorFromId(d.node_id)
         })
         .text(function (d) {
             return d.name
@@ -542,7 +542,7 @@ function drawLoggedUsers(data) {
 
     textUsers
         .attr("class", function (d) {
-            return "users floor_" + getFloorFromId(roomDict[d.no_room])
+            return "users floor_" + getFloorFromId(d.node_id)
         })
         .attr("x", function (d) {
             var thisWidth = this.getBoundingClientRect().width;
