@@ -2,6 +2,19 @@
 <html lang="ru">
 <head>
 	<meta charset="UTF-8">
+	<style>
+		body {
+			background: url(app/static/img/pergament.jpg);
+		}
+		@font-face {
+			font-family: MountainsofChristmas-Regular; /* Гарнитура шрифта */
+			src: local(MountainsofChristmas-Regular), url(app/static/fonts/MountainsofChristmas-Regular.ttf); /* Для остальных браузеров */
+		}
+
+		body, input, button {
+			font-family: 'MountainsofChristmas-Regular', Fantasy;
+		}
+	</style>
 	<title>Заголовок страницы</title>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script type="text/javascript">
@@ -41,8 +54,11 @@ r_text[31] = "The power to pointers!";
 r_text[30] = "Zero diff - zero mark";
 r_text[31] = "And unarticulated again";
 
-      var i = Math.floor(32*Math.random())
-      document.write(r_text[i]);
+      var i = Math.floor(32*Math.random());
+	r_text.forEach(function(t) {
+		document.write(t + "<br><br>");
+	})
+
      
     </script>
 

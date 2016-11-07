@@ -13,7 +13,10 @@ var r = Math.min(w, h)/2;
 
 // drag behavior
 var drag = d3.behavior.drag()
-    .on('drag', dragMov);
+    .on('drag', dragMov)
+    .on('dragend', function(){
+        updateGroupBySchedule(scheduleData, xmlData)
+    })
 
 var date = new Date;
 var outerTime = {hour: date.getHours(), minute: date.getMinutes()};
@@ -274,8 +277,14 @@ function moveArrows(time) {
 
 moveArrows(time);
 setInterval(function(){
-    //moveHand('minute');
-    //moveHand('hour');
-    //console.log(time)
-}, 1000);
+    time["minute"]++;
+    if(time["minute"] == 60) {
+        time["minute"] = 0;
+        time["hour"]++;
+        if (time["hour"] == 24) {
+            time["hour"] = 0;
+        }
+    }
+    moveArrows(time);
+}, 60000);
       

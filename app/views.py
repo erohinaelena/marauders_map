@@ -19,7 +19,7 @@ location = 'app/static/au_graph.gexf'
 G = nx.read_gexf(location)
 tmp = nx.get_node_attributes(G, 'no_room')
 rooms_map = {v: k for k, v in tmp.iteritems()}
-rooms_map[777] = '16'
+rooms_map[777] = '2122'
 
 # flask-login
 login_manager = LoginManager()
